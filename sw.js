@@ -1,5 +1,5 @@
 /* オフラインでも開けるようにする簡易サービスワーカー */
-const CACHE = "si-tools-v1";
+const CACHE = "si-tools-v2";
 const ASSETS = [
   "./",
   "./index.html",

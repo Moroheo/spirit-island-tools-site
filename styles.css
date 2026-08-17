@@ -118,3 +118,8 @@ svg { display: block; }
 @media (prefers-reduced-motion: reduce) {
   .si-press, .si-pop { transition: none; animation: none; }
 }
+.ml-9 { margin-left: 2.25rem; }
+.h-12 { height: 3rem; }
+.w-14 { width: 3.5rem; }
+.top-1 { top: 0.25rem; }
+.-mt-2 { margin-top: -0.5rem; }

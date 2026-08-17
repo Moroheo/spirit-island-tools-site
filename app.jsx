@@ -1,17 +1,6 @@
 const storage = {
-  get(key) {
-    try {
-      const v = localStorage.getItem(key);
-      return v == null ? null : { value: v };
-    } catch (e) {
-      return null;
-    }
-  },
-  set(key, value) {
-    try {
-      localStorage.setItem(key, value);
-    } catch (e) {}
-  },
+  get(key){try{const v=localStorage.getItem(key);return v==null?null:{value:v};}catch(e){return null;}},
+  set(key,value){try{localStorage.setItem(key,value);}catch(e){}},
 };
 
 const { useState, useEffect, useRef, createContext, useContext } = React;
@@ -176,6 +165,36 @@ const THEMES = {
     glow: "#D8C4FF",
     motif: "moon",
   },
+  sft: {
+    gold: "#8FBF6E",
+    parch: "#E2EFC8",
+    slate: "#33502E",
+    slateDark: "#22361F",
+    bg: makeBg("#0A160A", "#0E1E0C"),
+    fade: "#0A160A",
+    sky1: "#132A10",
+    sky2: "#0D1E0B",
+    island1: "#16300F",
+    island2: "#234A16",
+    ridge: "#4E8A3A",
+    glow: "#C8F09A",
+    motif: "fangs",
+  },
+  vgw: {
+    gold: "#D9A24E",
+    parch: "#F0DDB0",
+    slate: "#6B4A2A",
+    slateDark: "#4A3119",
+    bg: makeBg("#1E1006", "#28150A"),
+    fade: "#1E1006",
+    sky1: "#33200E",
+    sky2: "#22140A",
+    island1: "#2E1C0C",
+    island2: "#472C13",
+    ridge: "#9A6A34",
+    glow: "#FFD98A",
+    motif: "ruin",
+  },
 };
 
 const ThemeCtx = createContext(BASE_THEME);
@@ -224,6 +243,7 @@ const NEEDS = [
 const SPIRITS = [
   {
     id: "lss",
+    set: "基本",
     ja: "稲妻の迅き一撃",
     en: "Lightning's Swift Strike",
     el: { fire: 3, air: 3, sun: 1, water: 1 },
@@ -232,6 +252,7 @@ const SPIRITS = [
   },
   {
     id: "rss",
+    set: "基本",
     ja: "陽光を浴びた大河のうねり",
     en: "River Surges in Sunlight",
     el: { sun: 3, water: 3, earth: 1 },
@@ -240,6 +261,7 @@ const SPIRITS = [
   },
   {
     id: "vse",
+    set: "基本",
     ja: "生命に満ちた大地の力",
     en: "Vital Strength of the Earth",
     el: { earth: 3, plant: 2, sun: 1, beast: 1 },
@@ -248,6 +270,7 @@ const SPIRITS = [
   },
   {
     id: "sff",
+    set: "基本",
     ja: "炎のごとく揺らめく影",
     en: "Shadows Flicker Like Flame",
     el: { moon: 3, fire: 3 },
@@ -256,6 +279,7 @@ const SPIRITS = [
   },
   {
     id: "ts",
+    set: "基本",
     ja: "雷と話す者",
     en: "Thunderspeaker",
     el: { sun: 3, air: 3, fire: 1 },
@@ -264,6 +288,7 @@ const SPIRITS = [
   },
   {
     id: "srg",
+    set: "基本",
     ja: "生い茂った緑の広がり",
     en: "A Spread of Rampant Green",
     el: { plant: 3, water: 3, moon: 2, earth: 1 },
@@ -272,6 +297,7 @@ const SPIRITS = [
   },
   {
     id: "ohg",
+    set: "基本",
     ja: "大海の飢えた一飲み",
     en: "Ocean's Hungry Grasp",
     el: { water: 3, moon: 3, air: 1 },
@@ -280,13 +306,33 @@ const SPIRITS = [
   },
   {
     id: "bdn",
+    set: "基本",
     ja: "夢と悪夢の運び手",
     en: "Bringer of Dreams and Nightmares",
     el: { moon: 3, air: 3, beast: 3, earth: 1 },
     need: { fear: 3, def: 3, dmg: 2, dahan: 2, push: 1, energy: 1, range: 1 },
     memo: "恐怖レベルを上げ切るのがメイン戦略。自分のカードのダメージや破壊では侵略者もダハンも取り除けず、防御＋ダハンの反撃か不安カードの解決でしか盤面は減らない。ただし破壊しかけると通常より多くの不安が出るので、ダメージ札は「恐怖の燃料」として評価する。先天能力の維持が最優先なので、月・風・獣を供給する札を厚く取る。",
   },
+  {
+    id: "sft",
+    set: "枝と鉤爪",
+    ja: "葉陰に潜む鋭い牙",
+    en: "Sharp Fangs Behind the Leaves",
+    el: { moon: 2, beast: 3, plant: 2 },
+    need: { def: 3, blight: 2, fear: 2, dmg: 1, dahan: 1 },
+    memo: "先制攻撃で建設そのものを許さない精霊。獣トークンを展開して先天能力「広範囲での狩り」の火力源にする。固有能力に防御が一切無いので、外から補う防御札の価値が非常に高い。先天能力は荒廃した土地を対象に取れないため、荒廃は許すと詰みに直結する。中盤以降は不安付与が細くなりがちなので、恐怖を稼ぐ手段も意識して取る。",
+  },
+  {
+    id: "vgw",
+    set: "枝と鉤爪",
+    ja: "禁断の大地の番人",
+    en: "Vengeance of the Dying World",
+    el: { sun: 3, plant: 1, fire: 1 },
+    need: { blight: 3, def: 2, dmg: 2, fear: 1, energy: 0 },
+    memo: "序盤は防御で耐え忍び、精霊力とカードプレイが爆発的に伸びる終盤に大ダメージで一気に不安を稼ぐ精霊。自然トークンと先天能力の両方が荒廃した土地を対象に取れないため、荒廃を許さないことが最優先。先天能力・固有能力の一部はダハンを巻き込んで破壊するので、ダハンの逃がし先を先読みする必要がある。精霊力は自前で伸びるので外からの供給は不要、代わりに荒廃除去と防御の価値が高い。",
+  },
 ];
+
 
 // 精霊力の伸びやすさ。数値が大きいほど高コスト札の評価を下げる
 const COST_SENS = {
@@ -302,6 +348,148 @@ const COST_SENS = {
 
 /* 精霊別の獲得実績ベースTier表。効果欄はカードの要約 */
 const TIERS = {
+  vgw: {
+    note: "小能力Tierはなく、獲得回数の集計で見る精霊。ただし序盤の引きでゲームの難易度が変わるほど重要な3枚だけは別枠で紹介する。",
+    minor: [
+      {
+        tier: "序盤の当たり札",
+        name: "生命力の贈り物",
+        cost: 0,
+        speed: "即効",
+        effect: "精霊力を得る（聖地2つ以上でさらに1）",
+        note: "1ターン目の成長②で引けたら必ず獲得する。存在配置で開放するのが精霊力トラックではなくカードプレイ側になり、次のターンの成長③④の動きが大きく安定する。",
+      },
+      {
+        tier: "序盤の当たり札",
+        name: "不変の才能",
+        cost: 0,
+        speed: "即効",
+        effect: "2精霊力／ターン終了時に手札1枚と引き換えにカード1枚回収",
+        note: "同じく1ターン目に引けたら必ず獲得。精霊力を3以上確保してターンを始められるようになり、成長④を先に選んで荒廃していない土地ならどこでも存在を配置できる強い動きが可能になる。",
+      },
+      {
+        tier: "序盤の当たり札",
+        name: "犠牲による成長",
+        cost: 0,
+        speed: "即効",
+        effect: "自分の存在1つを破壊し、荒廃1除去か存在1追加を選ぶ／条件で両方",
+        note: "精霊力は伸びないが存在を配置できるので成長速度をブーストできる。「高まる力の恵み」と一緒にプレイする形で引けたら必ず獲得する。",
+      },
+    ],
+    countMinorNote:
+      "プレイが進むにつれて練度が上がり、獲得対象も変化してきたという振り返りつき。基本環境とひび割れた大地環境で顔ぶれが違う。",
+    countMinor: [
+      { group: "基本環境", set: "枝と鉤爪", name: "犠牲による成長", n: 7 },
+      { group: "基本環境", set: "基本", name: "聖なるものの歌", n: 7 },
+      { group: "基本環境", set: "枝と鉤爪", name: "生命にあふれる川", n: 7 },
+      { group: "基本環境", set: "基本", name: "不変の才能", n: 6 },
+      { group: "基本環境", set: "基本", name: "魅力的な壮観", n: 6 },
+      { group: "基本環境", set: "基本", name: "微睡みの誘い", n: 5 },
+      { group: "基本環境", set: "基本", name: "生命力の贈り物", n: 5 },
+      { group: "基本環境", set: "基本", name: "未知なるものの誘い", n: 5 },
+      { group: "基本環境", set: "基本", name: "元素の恵み", n: 5 },
+      { group: "基本環境", set: "基本", name: "浄化の炎", n: 5 },
+      { group: "基本環境", set: "枝と鉤爪", name: "天空の炎", n: 5 },
+      { group: "基本環境", set: "枝と鉤爪", name: "腐敗の吸収", n: 5 },
+      { group: "基本環境", set: "基本", name: "木と石の覚醒", n: 4 },
+      { group: "基本環境", set: "基本", name: "暗くもつれた木々", n: 4 },
+      { group: "基本環境", set: "枝と鉤爪", name: "共同での狩りの契約", n: 4 },
+      { group: "ひび割れた大地環境", set: "枝と鉤爪", name: "守護者の蛇", n: 7 },
+      { group: "ひび割れた大地環境", set: "基本", name: "暗くもつれた木々", n: 5 },
+      { group: "ひび割れた大地環境", set: "基本", name: "微睡みの誘い", n: 4 },
+      { group: "ひび割れた大地環境", set: "基本", name: "浄化の炎", n: 4 },
+      { group: "ひび割れた大地環境", set: "枝と鉤爪", name: "天空の炎", n: 4 },
+      { group: "ひび割れた大地環境", set: "基本", name: "自然の回復力", n: 4 },
+      { group: "ひび割れた大地環境", set: "ひび割れた大地", name: "下流へ流れ、追い風が吹く", n: 4 },
+      { group: "ひび割れた大地環境", set: "枝と鉤爪", name: "毒の雫", n: 4 },
+      { group: "ひび割れた大地環境", set: "ひび割れた大地", name: "太陽と星に照らされた暗闇の恩恵", n: 4 },
+      { group: "ひび割れた大地環境", set: "枝と鉤爪", name: "犠牲による成長", n: 3 },
+      { group: "ひび割れた大地環境", set: "基本", name: "木と石の覚醒", n: 3 },
+      { group: "ひび割れた大地環境", set: "枝と鉤爪", name: "混乱させる霞", n: 3 },
+      { group: "ひび割れた大地環境", set: "枝と鉤爪", name: "見つかりにくい待ち伏せ", n: 3 },
+      { group: "ひび割れた大地環境", set: "ひび割れた大地", name: "甲羅の地", n: 3 },
+      { group: "ひび割れた大地環境", set: "ひび割れた大地", name: "防衛の呼びかけ", n: 3 },
+      { group: "ひび割れた大地環境", set: "ひび割れた大地", name: "原始の記憶に悩まされる", n: 3 },
+    ],
+    countMajorNote:
+      "終盤はエレメント供給がゲームごとに大きく偏るため、この順位はあくまで参考程度。",
+    countMajor: [
+      { group: "基本環境", set: "基本", name: "戦を語る木と石", n: 8 },
+      { group: "基本環境", set: "基本", name: "稲妻の鉤爪", n: 7 },
+      { group: "基本環境", set: "枝と鉤爪", name: "絞め殺す炎の蔓", n: 7 },
+      { group: "基本環境", set: "基本", name: "身のすくむような恐怖", n: 5 },
+      { group: "基本環境", set: "基本", name: "陽光の翼の包み込み", n: 5 },
+      { group: "基本環境", set: "枝と鉤爪", name: "彼ら自身の破滅の道具", n: 3 },
+      { group: "基本環境", set: "基本", name: "破壊の活力", n: 3 },
+      { group: "基本環境", set: "枝と鉤爪", name: "衰えぬ成長", n: 3 },
+      { group: "基本環境", set: "基本", name: "断固たる要求", n: 3 },
+      { group: "基本環境", set: "枝と鉤爪", name: "大波の一掃", n: 2 },
+      { group: "基本環境", set: "基本", name: "密林の飢え", n: 2 },
+      { group: "基本環境", set: "枝と鉤爪", name: "満開の花より落ちる優しき死", n: 2 },
+      { group: "ひび割れた大地環境", set: "基本", name: "身のすくむような恐怖", n: 4 },
+      { group: "ひび割れた大地環境", set: "ひび割れた大地", name: "天上の輝きを放つ木々", n: 4 },
+      { group: "ひび割れた大地環境", set: "基本", name: "破壊の活力", n: 3 },
+      { group: "ひび割れた大地環境", set: "ひび割れた大地", name: "手つかずの土地の夢", n: 3 },
+      { group: "ひび割れた大地環境", set: "枝と鉤爪", name: "抑圧された厄災", n: 3 },
+      { group: "ひび割れた大地環境", set: "枝と鉤爪", name: "彼ら自身の破滅の道具", n: 2 },
+      { group: "ひび割れた大地環境", set: "基本", name: "密林の飢え", n: 2 },
+      { group: "ひび割れた大地環境", set: "基本", name: "鈍化と委縮の風", n: 2 },
+    ],
+  },
+  sft: {
+    note: "実際の獲得回数の集計。基本環境と枝と鉤爪・ひび割れた大地環境を分けている。",
+    countMinorNote:
+      "自然の回復力が採用トップ。基本セットにこの精霊専用の防御札が無いぶん、外から補う防御・不安寄りのカードに票が集まっている。",
+    countMinor: [
+      { group: "基本環境", set: "基本", name: "自然の回復力", n: 9 },
+      { group: "基本環境", set: "基本", name: "世話の要請", n: 8 },
+      { group: "基本環境", set: "枝と鉤爪", name: "むしばむ腐り蝿", n: 8 },
+      { group: "基本環境", set: "基本", name: "貪り食う蟻", n: 7 },
+      { group: "基本環境", set: "枝と鉤爪", name: "腐敗の吸収", n: 6 },
+      { group: "基本環境", set: "基本", name: "血の雨", n: 4 },
+      { group: "基本環境", set: "枝と鉤爪", name: "群がる狩蜂", n: 4 },
+      { group: "基本環境", set: "基本", name: "木と石の覚醒", n: 4 },
+      { group: "基本環境", set: "基本", name: "暗くもつれた木々", n: 4 },
+      { group: "基本環境", set: "基本", name: "流血の呼び声", n: 4 },
+      { group: "基本環境", set: "枝と鉤爪", name: "徘徊する黒豹", n: 4 },
+      { group: "基本環境", set: "枝と鉤爪", name: "共同での狩りの契約", n: 4 },
+      { group: "基本環境", set: "枝と鉤爪", name: "生命にあふれる川", n: 4 },
+      { group: "ひび割れた大地環境", set: "基本", name: "自然の回復力", n: 4 },
+      { group: "ひび割れた大地環境", set: "枝と鉤爪", name: "むしばむ腐り蝿", n: 3 },
+      { group: "ひび割れた大地環境", set: "ひび割れた大地", name: "鳥の警告の鳴き声", n: 3 },
+      { group: "ひび割れた大地環境", set: "基本", name: "世話の要請", n: 2 },
+      { group: "ひび割れた大地環境", set: "枝と鉤爪", name: "群がる狩蜂", n: 2 },
+      { group: "ひび割れた大地環境", set: "枝と鉤爪", name: "共同での狩りの契約", n: 2 },
+      { group: "ひび割れた大地環境", set: "枝と鉤爪", name: "生命にあふれる川", n: 2 },
+      { group: "ひび割れた大地環境", set: "基本", name: "夜のとばりの狩り", n: 2 },
+      { group: "ひび割れた大地環境", set: "基本", name: "群衆の体力消耗", n: 2 },
+      { group: "ひび割れた大地環境", set: "枝と鉤爪", name: "うごめく破滅の根", n: 2 },
+      { group: "ひび割れた大地環境", set: "ひび割れた大地", name: "失われたものへの嘆き", n: 2 },
+      { group: "ひび割れた大地環境", set: "基本", name: "浄化の炎", n: 2 },
+      { group: "ひび割れた大地環境", set: "枝と鉤爪", name: "剃刀のような下生え", n: 2 },
+      { group: "ひび割れた大地環境", set: "ひび割れた大地", name: "腐敗の力の封じ込め", n: 2 },
+      { group: "ひび割れた大地環境", set: "ひび割れた大地", name: "家畜の凶暴化", n: 2 },
+      { group: "ひび割れた大地環境", set: "ひび割れた大地", name: "曲がりくねった道に彼らを進ませる", n: 2 },
+    ],
+    countMajorNote:
+      "大能力の獲得タイミングがほとんど無い精霊。それでも引けたときの採用実績は「海の怪物」と基本セットの「密林の飢え」が突出。",
+    countMajor: [
+      { group: "基本環境", set: "枝と鉤爪", name: "海の怪物", n: 4 },
+      { group: "基本環境", set: "基本", name: "密林の飢え", n: 4 },
+      { group: "基本環境", set: "枝と鉤爪", name: "抑圧された厄災", n: 4 },
+      { group: "基本環境", set: "枝と鉤爪", name: "蝗の群れの飽くなき飢え", n: 3 },
+      { group: "基本環境", set: "基本", name: "陽光の翼の包み込み", n: 2 },
+      { group: "基本環境", set: "基本", name: "破壊の活力", n: 2 },
+      { group: "基本環境", set: "基本", name: "同族の絆の断絶", n: 2 },
+      { group: "基本環境", set: "枝と鉤爪", name: "破滅の血の疫病", n: 2 },
+      { group: "基本環境", set: "枝と鉤爪", name: "衰えぬ成長", n: 1 },
+      { group: "ひび割れた大地環境", set: "枝と鉤爪", name: "蝗の群れの飽くなき飢え", n: 1 },
+      { group: "ひび割れた大地環境", set: "ひび割れた大地", name: "そよ風が吹くたびに茂る下生え", n: 1 },
+      { group: "ひび割れた大地環境", set: "基本", name: "鈍化と委縮の風", n: 1 },
+      { group: "ひび割れた大地環境", set: "ひび割れた大地", name: "猟場になじむ", n: 1 },
+      { group: "ひび割れた大地環境", set: "ひび割れた大地", name: "二度と目覚めぬ眠り", n: 1 },
+    ],
+  },
   sff: {
     note: "小能力は優先度S/A/Bの順。末尾に拡張環境で取りたいカードを並べている。",
     minor: [
@@ -1816,7 +2004,7 @@ const TIERS = {
 };
 
 /* ============ 共通パーツ ============ */
-function ScreenTabs({ current, onPlay, onTier, show }) {
+function ScreenTabs({ current, onPlay, onTier, onEnergy, energy, show }) {
   const T = useT();
   if (!show) return null;
   const item = (key, label, onPress) => {
@@ -1836,14 +2024,34 @@ function ScreenTabs({ current, onPlay, onTier, show }) {
       </button>
     );
   };
+  const div = () => <span className="shrink-0" style={{ width: 1, background: `${T.gold}55` }} />;
   return (
     <div
       className="mt-4 flex rounded overflow-hidden"
       style={{ border: `1px solid ${T.gold}77` }}
     >
       {item("play", "基本プレイ方針", onPlay)}
-      <span className="shrink-0" style={{ width: 1, background: `${T.gold}55` }} />
+      {div()}
       {item("tier", "能力カードTier表", onTier)}
+      {onEnergy && (
+        <>
+          {div()}
+          <button
+            onClick={onEnergy}
+            className="si-press shrink-0 py-2.5 flex items-center justify-center gap-1.5"
+            style={{ width: 66, color: T.parch, fontFamily: jaFont, fontSize: 11 }}
+            aria-label="精霊力トラッカー"
+          >
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke={T.gold} strokeWidth="1.8">
+              <circle cx="12" cy="12" r="8" />
+              <circle cx="12" cy="12" r="3.2" />
+            </svg>
+            <span style={{ fontFamily: numFont, fontWeight: 900, fontSize: 15, color: "#fff" }}>
+              {energy}
+            </span>
+          </button>
+        </>
+      )}
     </div>
   );
 }
@@ -1855,7 +2063,7 @@ function Banner({ title, onBack, onNext }) {
       {onBack && (
         <button
           onClick={onBack}
-          className="si-press absolute left-0 top-2 h-10 w-10 flex items-center justify-center"
+          className="si-press absolute left-0 top-1 h-12 w-14 flex items-center justify-center"
           aria-label="戻る"
         >
           <span
@@ -1874,7 +2082,7 @@ function Banner({ title, onBack, onNext }) {
       {onNext && (
         <button
           onClick={onNext}
-          className="si-press absolute right-0 top-2 h-10 w-10 flex items-center justify-center"
+          className="si-press absolute right-0 top-1 h-12 w-14 flex items-center justify-center"
           aria-label="次の項目へ"
         >
           <span
@@ -2018,6 +2226,33 @@ function Motif({ kind, T }) {
         </g>
       </g>
     );
+  if (kind === "fangs")
+    return (
+      <g opacity="0.92">
+        <path d="M136 40l6 22-9-3z" fill={T.glow} stroke="none" />
+        <path d="M150 36l7 26-10-4z" fill={T.glow} stroke="none" />
+        <path d="M170 36l-7 26 10-4z" fill={T.glow} stroke="none" />
+        <path d="M184 40l-6 22 9-3z" fill={T.glow} stroke="none" />
+        <g {...line} strokeWidth="1.4" opacity="0.55">
+          <path d="M118 58q42 20 84 0" />
+          <path d="M124 70q36 14 72 0" />
+        </g>
+      </g>
+    );
+  if (kind === "ruin")
+    return (
+      <g opacity="0.9">
+        <path d="M132 78V46l10-10 10 10v32" {...line} strokeWidth="1.6" />
+        <path d="M156 78V54l9-9 9 9v24" {...line} strokeWidth="1.6" />
+        <path d="M180 78V60l7-7 7 7v18" {...line} strokeWidth="1.4" opacity="0.7" />
+        <g fill={T.glow} opacity="0.75">
+          <circle cx="142" cy="34" r="1.6" />
+          <circle cx="165" cy="42" r="1.3" />
+          <circle cx="120" cy="50" r="1.2" />
+        </g>
+        <path d="M110 78h100" {...line} strokeWidth="1.2" opacity="0.4" />
+      </g>
+    );
   return (
     <g stroke={T.glow} strokeWidth="1.6" fill="none" opacity="0.85" strokeLinecap="round">
       <path d="M160 44a18 18 0 1 0 18 18 13 13 0 0 0-13-13 8.5 8.5 0 0 0-8.5 8.5 4.5 4.5 0 0 0 4.5 4.5" />
@@ -2028,7 +2263,7 @@ function Motif({ kind, T }) {
 function IslandHeader({ spirit }) {
   const T = useT();
   return (
-    <div className="relative -mx-5">
+    <div className="relative -mx-5 -mt-2">
       <svg viewBox="0 0 320 158" className="w-full block" style={{ display: "block" }}>
         <defs>
           <linearGradient id="siSky" x1="0" y1="0" x2="0" y2="1">
@@ -2462,13 +2697,43 @@ function EnergyScreen({ onBack, store }) {
 }
 
 /* ============ 精霊選択 ============ */
-function SpiritScreen({ onBack, onPick, current }) {
+const SPIRIT_SETS = [
+  { key: "基本", label: "基本" },
+  { key: "枝と鉤爪", label: "枝と鉤爪" },
+];
+
+function SpiritScreen({ onBack, onPick, current, tab: setTab, setTab: setSetTab }) {
   const T = useT();
+  const shown = SPIRITS.filter((s) => s.set === setTab);
   return (
     <div>
       <Banner title="精霊を選ぶ" onBack={onBack} />
+
+      <div className="mt-6 flex rounded overflow-hidden" style={{ border: `1px solid ${T.gold}77` }}>
+        {SPIRIT_SETS.map((g, i) => (
+          <React.Fragment key={g.key}>
+            {i > 0 && <span className="shrink-0" style={{ width: 1, background: `${T.gold}55` }} />}
+            <button
+              onClick={() => setSetTab(g.key)}
+              className="si-press flex-1 py-2.5"
+              style={{
+                background:
+                  setTab === g.key
+                    ? `linear-gradient(165deg, ${T.slate} 0%, ${T.slateDark} 100%)`
+                    : "transparent",
+                color: setTab === g.key ? "#fff" : "#8FA89A",
+                fontFamily: jaFont,
+                fontSize: 13,
+              }}
+            >
+              {g.label}
+            </button>
+          </React.Fragment>
+        ))}
+      </div>
+
       <div className="mt-6 space-y-3">
-        {SPIRITS.map((s) => (
+        {shown.map((s) => (
           <button
             key={s.id}
             onClick={() => onPick(s.id)}
@@ -2496,7 +2761,7 @@ function SpiritScreen({ onBack, onPick, current }) {
         ))}
       </div>
       <div style={{ fontFamily: jaFont, fontSize: 11, color: "#6F8C7C" }} className="mt-5 text-center">
-        基本セットの8精霊を収録
+        {setTab === "基本" ? "基本セットの8精霊を収録" : "枝と鉤爪の精霊を収録"}
       </div>
     </div>
   );
@@ -2542,6 +2807,90 @@ function NoSpirit({ onBack, title }) {
 
 /* ============ 基本プレイ方針 ============ */
 const PLAYBOOK = {
+  vgw: {
+    headline:
+      "着実に活動域を広げ、終盤の怒涛の反撃で一気に不安を稼ぐ精霊。精霊力とカードプレイが爆発的に伸びるが、そこに至るまでの序盤は防戦一方になりがち。荒廃を許すと存在配置の足掛かりごと失う。",
+    turns: [
+      {
+        label: "1ターン目",
+        growth: "② 能力カード獲得 ＆ ③ 存在配置＋1精霊力",
+        unlock: "精霊力側を解放（収入2＋太陽／カードプレイ1枚）",
+        body:
+          "固有能力『高まる力の恵み』をプレイしつつ、2つの目標を掲げる。目標1：次のターンに略奪される土地の1か所を守るための能力カードを獲得する（成長②・高まる力の恵み・次ターンの成長④の3回の獲得機会がある）。目標2：次のターンに存在を置きたい土地に先天能力『大自然の広がり』で自然トークンを置く。ここまでで精霊力2を残せていれば、次のターンに成長③④という強い選択ができる。『不変の才能』『生命力の贈り物』『犠牲による成長』を引けた場合は必ず獲得し、動きが大きく上振れる。",
+      },
+      {
+        label: "2ターン目",
+        growth: "③ 存在配置＋1精霊力 ＆ ④ -3精霊力＋能力カード獲得＋存在配置",
+        unlock: "精霊力・カードプレイ側を解放（収入4＋太陽／カードプレイ2枚）",
+        body:
+          "この時点で小能力3枚・精霊力4を持っている。手札の組み合わせでプレイ方針は変わるが、どの方針でも『次のターンも成長③＆④を選べること』＝『手元に精霊力2以上を確保すること』を念頭に進める。",
+      },
+      {
+        label: "3ターン目",
+        growth: "③ 存在配置＋1精霊力 ＆ ④ -3精霊力＋能力カード獲得＋存在配置",
+        unlock: "カードプレイを2枚解放（収入4＋太陽／カードプレイ3枚）",
+        body:
+          "3枚プレイできるようになっても、『そびえ立つ激怒』＋小能力1枚の2枚プレイで先天能力『侵略者への懲罰』と合わせて反撃を始めるか、『そびえ立つ激怒』以外の固有能力と小能力3枚の組み合わせで乗り切るかを選ぶ。高レベルの敵対国では存在が壊れがちで『そびえ立つ激怒』が2ダメージしか出せないことも多く、後者を選ぶ場面が多い。（別案として、カードプレイを抑えて精霊力2枚解放（収入5＋太陽＋植物）に振る型もある。安定はするがカードプレイ3枚への到達が遠くなる。）",
+      },
+      {
+        label: "4ターン目以降",
+        growth: "初めて成長①（回収）を使うことが多い。もう1枠は③が望ましい",
+        unlock: "—",
+        body:
+          "②は存在を置けないため、活動域と精霊力の両面で今後が苦しくなりがち。このターンの終わりに精霊力2を確保できれば、次のターンに成長③④をしながら大能力に手を付け始められる。中盤以降の大能力はタイミングで有用性の幅が大きいので、④だけでなく②も選んでヒット率を上げるのも有効。",
+      },
+    ],
+    tips: [
+      "先天能力・固有能力の一部（『侵略者への懲罰』『そびえ立つ激怒』）はダハンを巻き込んで破壊する。いて欲しい時にいない、いて欲しくない時にいる、が起こりやすいので、ダハンの移動先は先読みして選ぶ。",
+      "自然トークンと先天能力はどちらも荒廃した土地を対象に取れない。荒廃を許すと存在配置のハードルが一気に上がるので、荒廃は許さない前提で動く。『根からの再生』は森・湿地の荒廃だけ除去できるので、その2地形だけは多少ガードを下げてよい。沙漠・山岳の荒廃には特に敏感になる。",
+      "負け筋①：序盤に荒廃を許す。荒廃除去はカードプレイ枚数が増えてからの仕事なので、序盤の荒廃は後々の窮地に直結する。",
+      "負け筋②：ダハンを破壊してしまう。略奪でだけでなく、自分の固有能力・先天能力でダハンを巻き込むのも悪手。終盤はダハンの反撃と不安カードを頼りにする。",
+      "負け筋③：炎エレメントの獲得を怠る。カードプレイが3枚以上になったら、毎ターン『侵略者への懲罰』を撃てるカードを狙う。優先度は太陽＆植物＜太陽＆炎＜炎＆植物。",
+      "『高まる力の恵み』は基本的に1ターン目専用。役割を終えたら終盤の大能力獲得時の忘却対象にすることが多い。",
+      "『干渉を許さぬ大自然』はダハンの移動と自然トークンの配置（または獣トークン×2ダメージ相当）を1枚でこなす強力な札だが、2コストが重く荒廃地を対象に取れない。荒廃除去が進んだ終盤では即効フェイズの都市破壊札に化ける。",
+      "『そびえ立つ激怒』は聖地から1歩先を対象にできるのが貴重（先天能力の届かない土地や荒廃地にも効く）。ただしダハンを全部破壊するデメリットがあるので、事前にダハンを逃がしておく。3コストで町2つ／都市2つ＋2不安＋エレメント供給と仕事量は十分。",
+      "獲得優先度：序盤は防御カードを最優先（エレメントは問わない）。中盤は『侵略者への懲罰』に必要なエレメント供給。終盤はゲームを終わらせる大能力を探す。",
+    ],
+  },
+  sft: {
+    headline:
+      "先制攻撃で侵略者を仕留め、建設そのものを許さない精霊。獣トークンを展開して先天能力「広範囲での狩り」の火力源にする。荒廃した土地には一切手出しできないので、荒廃を許すと負けに直結する。",
+    turns: [
+      {
+        label: "1ターン目",
+        growth: "② 存在配置 ＆ ③ 能力カード獲得＋1精霊力",
+        unlock: "精霊力側を解放（収入1＋獣／カードプレイ2枚）",
+        body:
+          "毎ターン「広範囲での狩り」レベル2以上（獣トークンでの攻撃）を目指す。このターンにプレイする2枚はどちらも植物・獣を供給する必要がある（もう1つの獣はトラックから得る）。獲得は植物＋獣、無理なら獣供給のカードを狙う。プレイは「暗闇に輝く牙」と「密林に近すぎる」になりがちで、遠征隊の破壊を進める。",
+      },
+      {
+        label: "2ターン目",
+        growth: "① 回収＋能力カード獲得（-1精霊力）＆ ② 存在配置",
+        unlock: "精霊力側を解放（収入1＋獣＋植物／カードプレイ2枚）",
+        body:
+          "トラックから獣・植物が得られるので、要求エレメントは2獣1植物。「建築者の捕食」「恐ろしい追跡」もプレイ可能になる。このターンに置いた存在を「捕食者の顕現」で獣トークンに変えておくと、1ターン目に建設を許した町を壊しやすい。防御カードを持っていて略奪予定地にダハンがいるなら、「広範囲での狩り」は別の土地に向けてよい。※1ターン目のカード獲得で植物・獣を両方供給する札を引けた場合は上振れで、成長は②＆③にする。",
+      },
+      {
+        label: "3ターン目以降",
+        growth: "1枚回収が解放されるまでは毎ターン②を選び、もう1枠は状況次第",
+        unlock: "—",
+        body:
+          "動きA：①と③を交互に使い、精霊力が細いまま小能力構築を積む。動きB：あるターンは④でカード獲得を見送りコストを抑え、次のターンに①で回収と大能力の獲得を狙う。どちらかに偏らず、侵略者の攻め方に合わせて組み合わせる。",
+      },
+    ],
+    tips: [
+      "固有能力に防御が一切無い。序盤に防御カードを取れると、ダハンの反撃も使えるようになり勝ちに近づく。",
+      "先天能力「広範囲での狩り」は荒廃した土地を対象に取れない。荒廃を許すとその土地には一切手出しできなくなるので、荒廃を許すことは負けに直結すると考える。",
+      "荒廃した土地に侵略者が入ってきたら「密林に近すぎる」で早期に摘み取る。先天能力「激高しての襲撃」は条件達成が中盤以降なので、序盤からこれを頼るのはお勧めしない。",
+      "荒廃コマの除去はエレメントの縛りが厳しく、除去できる能力を持っていてもプレイする余裕が無いことが多い。",
+      "負け筋①：荒廃した土地で建設される。「獣の仲間」で存在を獣と一緒に動かして「恐ろしい追跡」で押し出すことはできるが、存在を最低限に抑えるプレイだと難しい。",
+      "負け筋②：中盤からの不安付与が弱い。先制で遠征隊を処理し続けると建設自体が起きず、不安を稼がないままゲームが進む。別の手段で不安を足す必要がある。",
+      "負け筋③：荒廃した島やイベントによる存在破壊。存在の配置を最低限にしたまま進めると、急な存在破壊で存在切れ敗北のリスクが上がる。",
+      "獲得優先度：序盤は植物・獣供給のカードを最優先（効果より供給を優先）。中盤は防御や荒廃除去を持つカード（固有能力に無いため）。終盤は劣勢を覆すのが苦手なので、大能力の引きとイベント・不安カードに賭ける。",
+      "「暗闇に輝く牙」は序盤は獣配置と火力補強、中盤以降は3不安の方を選んで勝利条件に寄せる。「建築者の捕食」「恐ろしい追跡」は遠征隊を除去しすぎると腐るので、別の土地の建設・遠征役に温存する意識を持つ。",
+      "イベントで獣トークンの恩恵を受けることがあるので、獣はなるべく侵略者がいる土地に配置・移動する。",
+    ],
+  },
   sff: {
     headline:
       "どう動いても不安を与えていく精霊。初期能力はどれも強力だが、ほとんどが遅発で到達距離0。1〜2ターン先を読み、存在マーカーを守りながら回す。",
@@ -2892,7 +3241,7 @@ const PLAYBOOK = {
   },
 };
 
-function PlaybookScreen({ onBack, spirit, onTier }) {
+function PlaybookScreen({ onBack, spirit, onTier, onEnergy, energy }) {
   const T = useT();
   if (!spirit) return <NoSpirit onBack={onBack} title="基本プレイ方針" />;
   const p = PLAYBOOK[spirit.id];
@@ -2904,7 +3253,7 @@ function PlaybookScreen({ onBack, spirit, onTier }) {
       <div className="mt-4 text-center" style={{ fontFamily: jaFont, fontSize: 13, color: "#9FBFA8" }}>
         {spirit.ja}
       </div>
-      <ScreenTabs current="play" onTier={onTier} show={hasTier} />
+      <ScreenTabs current="play" onTier={onTier} onEnergy={onEnergy} energy={energy} show={hasTier} />
 
       {!p ? (
         <div
@@ -3017,7 +3366,7 @@ const TIER_TABS = [
   { key: "countMajor", label: "獲得回数・大" },
 ];
 
-function TierScreen({ onBack, spirit, onPlay }) {
+function TierScreen({ onBack, spirit, onPlay, onEnergy, energy }) {
   const T = useT();
   const [tab, setTab] = useState(null);
   useScrollTop(tab);
@@ -3035,7 +3384,7 @@ function TierScreen({ onBack, spirit, onPlay }) {
       <div className="mt-4 text-center" style={{ fontFamily: jaFont, fontSize: 13, color: "#9FBFA8" }}>
         {spirit.ja}
       </div>
-      <ScreenTabs current="tier" onPlay={onPlay} show={hasPlay} />
+      <ScreenTabs current="tier" onPlay={onPlay} onEnergy={onEnergy} energy={energy} show={hasPlay} />
 
       {!data ? (
         <div
@@ -3441,10 +3790,172 @@ const ADVERSARIES = [
   },
 ];
 
-function AchievementScreen({ onBack }) {
+function ScenarioArt({ kind, T }) {
+  const g = T.gold, glow = T.glow, ridge = T.ridge;
+  return (
+    <div className="relative -mx-4 -mt-4 mb-3" style={{ borderRadius: "4px 4px 0 0", overflow: "hidden" }}>
+      <svg viewBox="0 0 320 96" className="w-full block" style={{ display: "block" }}>
+        <defs>
+          <linearGradient id={`scSky-${kind}`} x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor={T.sky1} />
+            <stop offset="100%" stopColor={T.sky2} />
+          </linearGradient>
+          <linearGradient id={`scFade-${kind}`} x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#CFDBD9" stopOpacity="0" />
+            <stop offset="100%" stopColor="#DFE8E6" stopOpacity="1" />
+          </linearGradient>
+          <radialGradient id={`scGlow-${kind}`} cx="50%" cy="45%" r="55%">
+            <stop offset="0%" stopColor={glow} stopOpacity="0.5" />
+            <stop offset="100%" stopColor={glow} stopOpacity="0" />
+          </radialGradient>
+        </defs>
+        <rect width="320" height="96" fill={`url(#scSky-${kind})`} />
+
+        {kind === "blitz" && (
+          <g>
+            <ellipse cx="160" cy="52" rx="120" ry="40" fill={`url(#scGlow-${kind})`} />
+            {[40, 90, 150, 210, 270].map((x, i) => (
+              <g key={i}>
+                <line x1={x} y1="90" x2={x + 26} y2="12" stroke={g} strokeWidth="3" strokeLinecap="round" opacity="0.85" />
+                <path d={`M${x + 26} 12 l-7 4 l3 -8 z`} fill={g} opacity="0.9" />
+              </g>
+            ))}
+            <g stroke={glow} strokeWidth="1.4" opacity="0.5">
+              <path d="M20 70 q40 -14 80 0 t80 0 t80 0" fill="none" />
+            </g>
+          </g>
+        )}
+
+        {kind === "heart" && (
+          <g>
+            <ellipse cx="160" cy="50" rx="70" ry="34" fill={`url(#scGlow-${kind})`} />
+            <circle cx="160" cy="50" r="12" fill={glow} opacity="0.9" />
+            <circle cx="160" cy="50" r="20" fill="none" stroke={g} strokeWidth="1.6" opacity="0.7" />
+            <circle cx="160" cy="50" r="30" fill="none" stroke={g} strokeWidth="1.2" opacity="0.4" />
+            {[0, 60, 120, 180, 240, 300].map((a, i) => {
+              const rad = (a * Math.PI) / 180;
+              const x1 = 160 + Math.cos(rad) * 34, y1 = 50 + Math.sin(rad) * 34;
+              const x2 = 160 + Math.cos(rad) * 46, y2 = 50 + Math.sin(rad) * 46;
+              return <line key={i} x1={x1} y1={y1} x2={x2} y2={y2} stroke={g} strokeWidth="2.4" strokeLinecap="round" opacity="0.7" />;
+            })}
+          </g>
+        )}
+
+        {kind === "rite" && (
+          <g>
+            <ellipse cx="160" cy="50" rx="110" ry="40" fill={`url(#scGlow-${kind})`} />
+            <path d="M182 30a16 16 0 1 0 0 30 20 20 0 0 1 0 -30z" fill={glow} opacity="0.6" />
+            <g stroke={glow} strokeWidth="1.6" fill="none" opacity="0.7" strokeLinecap="round">
+              <path d="M60 70 q20 -30 44 -14 q20 14 0 30" />
+              <path d="M120 74 q16 -34 42 -18" />
+              <path d="M230 68 q-18 -28 -44 -12" />
+            </g>
+            <g fill={glow} opacity="0.8">
+              <circle cx="70" cy="30" r="1.6" /><circle cx="250" cy="34" r="1.4" />
+              <circle cx="150" cy="22" r="1.3" /><circle cx="205" cy="66" r="1.5" />
+            </g>
+          </g>
+        )}
+
+        {kind === "dahan" && (
+          <g>
+            <ellipse cx="160" cy="60" rx="130" ry="34" fill={`url(#scGlow-${kind})`} />
+            {[30, 70, 110, 160, 210, 250, 290].map((x, i) => {
+              const h = 30 + (i % 3) * 8;
+              return (
+                <g key={i} opacity="0.9">
+                  <line x1={x} y1={90} x2={x} y2={90 - h} stroke={ridge} strokeWidth="4" strokeLinecap="round" />
+                  <circle cx={x} cy={90 - h - 5} r="4.5" fill={ridge} />
+                  <line x1={x} y1={90 - h + 6} x2={x + 12} y2={90 - h - 10} stroke={g} strokeWidth="2" strokeLinecap="round" opacity="0.8" />
+                </g>
+              );
+            })}
+          </g>
+        )}
+
+        <rect x="0" y="58" width="320" height="38" fill={`url(#scFade-${kind})`} />
+      </svg>
+    </div>
+  );
+}
+
+const SCENARIOS = [
+  {
+    id: "sc-blitz",
+    art: "blitz",
+    name: "急襲",
+    difficulty: 0,
+    intro:
+      "誰が相手でも楽しめるが、特に「素早く即解決」スタイルのゲームをより好むプレイヤー向け。",
+    good: ["炎のごとく揺らめく影のような、コストが低く即座に効く精霊", "別の方法で速度を上げる、ブランデンブルク＝プロイセン王国と組み合わせて使う場合"],
+    bad: [],
+    rules: [
+      "すべての能力は即効になる（またはすでに即効の能力はそのまま）。",
+      "コスト0の先天能力／能力カードのコストは1減る。コストが0の先天能力の場合、代わりに1精霊力を得る。",
+      "遠征時、ボードごとに荒廃カード上の荒廃1個を荒廃させる。ボードの7番の土地に荒廃を置く。",
+      "ゲームの準備の終了時、侵略者は追加のアクションをもう1セット実行する（このため、侵略者は「遠征」をもう1回行い、そのあと「建設」と「遠征」を行う）。",
+    ],
+    lose: [],
+  },
+  {
+    id: "sc-heart",
+    art: "heart",
+    name: "島の中心部の防衛",
+    difficulty: 0,
+    intro:
+      "侵略者たちは島の力の源を見つけ、そこに占領されれば島の中心部は破壊されてしまう。故郷を守るため、君たちは断固として行動しなければならない。",
+    good: ["生い茂った緑の広がりのような、簡単に建設を阻止できる精霊", "夢と悪夢の運び手のような、建設を阻止することも、町を素早く破壊することもできない精霊は苦手"],
+    bad: ["夢と悪夢の運び手のような、建設を阻止することも町を素早く破壊することもできない精霊を使う場合"],
+    rules: [
+      "追加の敗北条件：1ターン目のあとの任意の時点で、中心の土地のいずれかに町／都市がある。",
+      "中心の土地：ボード上には中心の土地が1つずつある。1〜2人プレイは各ボードの7番の土地、3人・4人プレイはボード上の指定の土地（カードの図を参照）。",
+      "準備：すべての町を取り除く。各中心の土地に町を1つ置き、さらにそのボードで「大海の飢えた一飲み」にとってのように、最も近くにある適切な土地に精霊マーカーを置く。",
+      "各精霊は追加の能力カードを2枚持ってゲームを始める。大能力／小能力デッキからカードを1枚ずつ引く。",
+    ],
+    lose: ["1ターン目のあと、中心の土地のいずれかに町か都市があると敗北する。"],
+  },
+  {
+    id: "sc-rite",
+    art: "rite",
+    name: "恐怖の儀式",
+    difficulty: 3,
+    intro:
+      "侵略者たちはこの敵意と苦痛の地を甘んじて受けることにしたようだ。隣人の死、前兆、そして天空を舞う精霊たちにもかかわらず、ここにとどまるという断固とした意思を持っているとは、彼らの母国はいったいどのようなところなのだろうか？",
+    good: ["雷と話す者のような、ダハンを移動させるのが得意な精霊"],
+    bad: ["ソロゲームで、精霊力の入手が貧弱な精霊や、存在マーカーの配置が遅い精霊"],
+    rules: [
+      "恐怖レベルは上がらず、恐怖の儀式を執り行うことで上がる。",
+      "侵略者フェイズ中、獲得した不安カードを解決しない（覚えておくのが難しい場合、獲得した不安カードをこのカード上に置いてもかまわない）。",
+      "遅発能力フェイズ中、以下のすべての条件を満たしたとき精霊は恐怖の儀式を執り行うことができる：各精霊のマーカーが少なくとも1つはある土地が1つある／精霊が集団で合計3精霊力を支払い、その土地内で合計3ダハンを破壊する。",
+      "恐怖の儀式を執り行ったとき、以下のステップを実行する：恐怖レベルが1つ上がる。次の恐怖レベルに到達した場合、勝利に到達する（3回目の儀式だった場合、勝利に到達）。獲得したすべての不安カードを解決する。儀式を執り行った土地からすべての遠征隊を押し出し、隣接する土地に均等に分配する（ある土地に2つ目を移動させる前に、隣接するいる各土地にダハンを1つずつ移動）。",
+      "準備の変更：恐怖レベルディバイダーを不安デッキ内に入れる代わりにボードの横に置く。すべての不安カードを使って不安デッキを作り、プレイヤーはもう不安カードを得ることはできない。",
+    ],
+    lose: [],
+  },
+  {
+    id: "sc-dahan",
+    art: "dahan",
+    name: "ダハンの暴動",
+    difficulty: 4,
+    intro:
+      "戦略的重要性を引き合いに出して、侵略者たちの政府は超自然の漠然とした不安と噂に直面しつつ退却を拒否した。彼らはダハンの好戦性に対応して大勢の人材を植民地に送り込んだ。",
+    good: ["雷と話す者のような、ダハンの移動能力をいくつも持っている精霊", "陽光を浴びた大河のうねりのような、ダハンの移動や破壊が得意な精霊"],
+    bad: ["イングランド王国のような、多くの町／都市を建設する敵対国と組み合わせて使う場合は特に難しくなる"],
+    rules: [
+      "絶え間ない襲撃：ダハンがある土地から別の土地へ移動するたびに、移動先の土地内で1ダメージを与える（このダメージは、それらを移動させた能力の効果を完全に解決したあとで発生する。あるダハンが1つのダハンを複数回移動させる場合、最後に移動を終えた土地でのみダメージを与える）。",
+      "軍事的対応：都市が1つ破壊されるたびに、最も近くの土地1つに町を1つ追加する。町が1つ破壊されるたびに、ダハンがある最も近くの土地1つに町を1つ追加する（元の侵略者を破壊した能力や効果を完全に解決したあとで、新たな侵略者を追加する）。",
+      "組織的暴動：恐怖レベル“勝利”に到達したとき、「略奪」のあとで、ダハンが反撃したかのように即座にボード上のすべての土地で侵略者にダメージを与えます。これによってこのシナリオの勝利条件を満たすことができなかった場合、プレイヤーは敗北します。",
+      "勝利条件：恐怖レベルに基づいた通常の勝利条件を、代わりに以下の勝利条件を適用する。恐怖レベル2：町／都市がダハンより多い土地がない。恐怖レベル3＋：町／都市がダハンより多い土地が、プレイ人数×1つより少ない。",
+    ],
+    lose: ["追加の敗北条件：生き残っているダハンの数が、プレイ人数×2つより少ない。"],
+  },
+];
+
+function AchievementScreen({ onBack, tab, setTab }) {
   const T = useT();
   const [done, setDone] = useState({});
   const [openId, setOpenId] = useState(ADVERSARIES[0].id);
+  const [openSc, setOpenSc] = useState(SCENARIOS[0].id);
   const [showHelp, setShowHelp] = useState(false);
   const [memoOpen, setMemoOpen] = useState({});
   const loaded = useRef(false);
@@ -3474,240 +3985,432 @@ function AchievementScreen({ onBack }) {
 
   const toggle = (key) => setDone((d) => ({ ...d, [key]: !d[key] }));
 
+  const check = (checked) => (
+    <span
+      className="shrink-0 mt-0.5 flex items-center justify-center"
+      style={{
+        width: 26,
+        height: 26,
+        borderRadius: 4,
+        background: checked ? "#2C5C5A" : "rgba(255,255,255,.55)",
+        border: `2px solid ${checked ? T.gold : "rgba(60,80,78,.35)"}`,
+      }}
+      aria-hidden="true"
+    >
+      {checked && (
+        <svg viewBox="0 0 24 24" width="17" height="17" fill="none">
+          <path
+            d="M4 12.5l5.5 6L20 5.5"
+            stroke="#E0B84E"
+            strokeWidth="4"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
+      )}
+    </span>
+  );
+
+  const paraBlock = (title, lines, color) =>
+    lines && lines.length > 0 ? (
+      <div className="pb-2 mb-2" style={{ borderBottom: "1px solid rgba(60,80,78,.2)" }}>
+        <div style={{ fontFamily: jaFont, fontSize: 11.5, color: color || "#3B4A48", fontWeight: 700 }}>
+          {title}
+        </div>
+        {lines.map((t, i) => (
+          <div
+            key={i}
+            style={{ fontFamily: jaFont, fontSize: 11.5, color: "#3B4A48", lineHeight: 1.85, marginTop: 3 }}
+          >
+            {lines.length > 1 ? "・" : ""}{t}
+          </div>
+        ))}
+      </div>
+    ) : null;
+
   return (
     <div>
       <Banner title="達成チェッカー" onBack={onBack} />
 
-      <button
-        onClick={() => setShowHelp((v) => !v)}
-        className="si-press mt-6 w-full py-2.5 rounded flex items-center justify-center gap-2"
-        style={{ border: `1px solid ${T.gold}66`, color: T.parch, fontFamily: jaFont, fontSize: 13 }}
-      >
-        敵対国の見かた
-        <span style={{ fontSize: 10 }}>{showHelp ? "▲" : "▼"}</span>
-      </button>
+      <div className="mt-6 flex rounded overflow-hidden" style={{ border: `1px solid ${T.gold}77` }}>
+        {[
+          ["adv", "敵対国"],
+          ["sc", "シナリオ"],
+        ].map(([k, label], i) => (
+          <React.Fragment key={k}>
+            {i === 1 && <span className="shrink-0" style={{ width: 1, background: `${T.gold}55` }} />}
+            <button
+              onClick={() => setTab(k)}
+              className="si-press flex-1 py-2.5"
+              style={{
+                background: tab === k ? `linear-gradient(165deg, ${T.slate} 0%, ${T.slateDark} 100%)` : "transparent",
+                color: tab === k ? "#fff" : "#8FA89A",
+                fontFamily: jaFont,
+                fontSize: 13,
+              }}
+            >
+              {label}
+            </button>
+          </React.Fragment>
+        ))}
+      </div>
 
-      {showHelp && (
-        <div
-          className="mt-2 px-4 py-4"
-          style={{
-            background: "linear-gradient(180deg, #DFE8E6 0%, #CFDBD9 100%)",
-            borderRadius: 4,
-            boxShadow: "0 6px 14px rgba(0,0,0,.4)",
-          }}
-        >
-          {[
-            "ゲームの準備時に適用する追加ルールがあるので、準備を始める前に敵対国を選ぶ。",
-            "レベルはその敵対国の強さの段階。上がるごとに強くなる。",
-            "レベル0が存在し、レベル1以上を適用しない場合はレベル0＝基本レベルになる（追加敗北条件とステージ2の拡大のみ適用）。",
-            "不安カードは、不安デッキの総数と恐怖レベルごとの枚数。レベルが上がるほど多くなる＝恐怖レベルが上がるのが遅くなる。",
-            "不安カードの欄は書き換えであって累積ではないので注意。",
-            "追加ルールは累積で、レベルが上がると前のレベルの効果も引き継ぐ。つまりレベル6はすべての効果を持つ。",
-          ].map((t, i) => (
-            <div key={i} className="flex gap-2 py-1.5">
-              <span style={{ color: "#7A6A3A", fontSize: 11, lineHeight: 1.9 }}>◆</span>
-              <span
-                style={{ fontFamily: jaFont, fontSize: 11.5, color: "#22302E", lineHeight: 1.9 }}
-              >
-                {t}
-              </span>
+      {tab === "adv" && (
+        <>
+          <button
+            onClick={() => setShowHelp((v) => !v)}
+            className="si-press mt-4 w-full py-2.5 rounded flex items-center justify-center gap-2"
+            style={{ border: `1px solid ${T.gold}66`, color: T.parch, fontFamily: jaFont, fontSize: 13 }}
+          >
+            敵対国の見かた
+            <span style={{ fontSize: 10 }}>{showHelp ? "▲" : "▼"}</span>
+          </button>
+
+          {showHelp && (
+            <div
+              className="mt-2 px-4 py-4"
+              style={{
+                background: "linear-gradient(180deg, #DFE8E6 0%, #CFDBD9 100%)",
+                borderRadius: 4,
+                boxShadow: "0 6px 14px rgba(0,0,0,.4)",
+              }}
+            >
+              {[
+                "ゲームの準備時に適用する追加ルールがあるので、準備を始める前に敵対国を選ぶ。",
+                "レベルはその敵対国の強さの段階。上がるごとに強くなる。",
+                "レベル0が存在し、レベル1以上を適用しない場合はレベル0＝基本レベルになる（追加敗北条件とステージ2の拡大のみ適用）。",
+                "不安カードは、不安デッキの総数と恐怖レベルごとの枚数。レベルが上がるほど多くなる＝恐怖レベルが上がるのが遅くなる。",
+                "不安カードの欄は書き換えであって累積ではないので注意。",
+                "追加ルールは累積で、レベルが上がると前のレベルの効果も引き継ぐ。つまりレベル6はすべての効果を持つ。",
+              ].map((t, i) => (
+                <div key={i} className="flex gap-2 py-1.5">
+                  <span style={{ color: "#7A6A3A", fontSize: 11, lineHeight: 1.9 }}>◆</span>
+                  <span style={{ fontFamily: jaFont, fontSize: 11.5, color: "#22302E", lineHeight: 1.9 }}>
+                    {t}
+                  </span>
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
-      )}
+          )}
 
-      <div className="mt-6 space-y-4">
-        {ADVERSARIES.map((a) => {
-          const open = openId === a.id;
-          const cleared = a.levels.filter((l) => done[`${a.id}:${l.lv}`]).length;
-          const top = a.levels.reduce(
-            (m, l) => (done[`${a.id}:${l.lv}`] ? Math.max(m, l.lv) : m),
-            -1
-          );
-          return (
-            <div key={a.id}>
-              <button
-                onClick={() => setOpenId(open ? null : a.id)}
-                className="si-press relative w-full py-4 focus:outline-none"
-              >
-                <div className="absolute inset-0" style={{ background: T.gold, clipPath: HEX_WIDE }} />
-                <div
-                  className="absolute"
-                  style={{
-                    inset: "3px",
-                    clipPath: HEX_WIDE,
-                    background: `linear-gradient(165deg, ${T.slate} 0%, ${T.slate} 55%, ${T.slateDark} 100%)`,
-                  }}
-                />
-                <div className="relative flex items-center gap-3 px-6">
-                  {a.flag && (
-                    <img
-                      src={a.flag}
-                      alt=""
-                      className="shrink-0"
+          <div className="mt-6 space-y-4">
+            {ADVERSARIES.map((a) => {
+              const open = openId === a.id;
+              const cleared = a.levels.filter((l) => done[`${a.id}:${l.lv}`]).length;
+              const top = a.levels.reduce(
+                (m, l) => (done[`${a.id}:${l.lv}`] ? Math.max(m, l.lv) : m),
+                -1
+              );
+              return (
+                <div key={a.id}>
+                  <button
+                    onClick={() => setOpenId(open ? null : a.id)}
+                    className="si-press relative w-full py-4 focus:outline-none"
+                  >
+                    <div className="absolute inset-0" style={{ background: T.gold, clipPath: HEX_WIDE }} />
+                    <div
+                      className="absolute"
                       style={{
-                        width: 42,
-                        height: 28,
-                        objectFit: "cover",
-                        borderRadius: 2,
-                        border: `1px solid ${T.gold}`,
-                        boxShadow: "0 2px 4px rgba(0,0,0,.45)",
+                        inset: "3px",
+                        clipPath: HEX_WIDE,
+                        background: `linear-gradient(165deg, ${T.slate} 0%, ${T.slate} 55%, ${T.slateDark} 100%)`,
                       }}
                     />
-                  )}
-                  <div className="flex-1 text-left">
-                    <div
-                      className="text-white"
-                      style={{ fontFamily: jaFont, fontSize: 13, textShadow: "0 2px 3px rgba(0,0,0,.5)" }}
-                    >
-                      {a.name}
-                    </div>
-                    <div style={{ fontFamily: jaFont, fontSize: 11, color: "#BBD3DE", marginTop: 3 }}>
-                      {cleared > 0 ? `最高レベル${top}　クリア${cleared}/7` : "未クリア"}
-                    </div>
-                  </div>
-                  <span style={{ color: "#DCE6E4", fontSize: 11 }}>{open ? "▲" : "▼"}</span>
-                </div>
-              </button>
-
-              {open && (
-                <div
-                  className="mt-2 px-4 py-4"
-                  style={{
-                    background: "linear-gradient(180deg, #DFE8E6 0%, #CFDBD9 100%)",
-                    borderRadius: 4,
-                    boxShadow: "0 6px 14px rgba(0,0,0,.4)",
-                  }}
-                >
-                  <div className="pb-3 mb-2" style={{ borderBottom: "1px solid rgba(60,80,78,.25)" }}>
-                    <div style={{ fontFamily: jaFont, fontSize: 11.5, color: "#3B4A48", lineHeight: 1.8 }}>
-                      追加敗北条件：<span style={{ fontWeight: 700 }}>{a.loss.name}</span>
-                      {a.loss.text && (
-                        <>
-                          <br />
-                          {a.loss.text}
-                        </>
+                    <div className="relative flex items-center gap-3 px-6">
+                      {a.flag && (
+                        <img
+                          src={a.flag}
+                          alt=""
+                          className="shrink-0"
+                          style={{
+                            width: 42,
+                            height: 28,
+                            objectFit: "cover",
+                            borderRadius: 2,
+                            border: `1px solid ${T.gold}`,
+                            boxShadow: "0 2px 4px rgba(0,0,0,.45)",
+                          }}
+                        />
                       )}
+                      <div className="flex-1 text-left">
+                        <div
+                          className="text-white"
+                          style={{ fontFamily: jaFont, fontSize: 13, textShadow: "0 2px 3px rgba(0,0,0,.5)" }}
+                        >
+                          {a.name}
+                        </div>
+                        <div style={{ fontFamily: jaFont, fontSize: 11, color: "#BBD3DE", marginTop: 3 }}>
+                          {cleared > 0 ? `最高レベル${top}　クリア${cleared}/7` : "未クリア"}
+                        </div>
+                      </div>
+                      <span style={{ color: "#DCE6E4", fontSize: 11 }}>{open ? "▲" : "▼"}</span>
                     </div>
+                  </button>
+
+                  {open && (
                     <div
+                      className="mt-2 px-4 py-4"
                       style={{
-                        fontFamily: jaFont,
-                        fontSize: 11.5,
-                        color: "#3B4A48",
-                        lineHeight: 1.8,
-                        marginTop: 4,
+                        background: "linear-gradient(180deg, #DFE8E6 0%, #CFDBD9 100%)",
+                        borderRadius: 4,
+                        boxShadow: "0 6px 14px rgba(0,0,0,.4)",
                       }}
                     >
-                      ステージ2の拡大：<span style={{ fontWeight: 700 }}>{a.expandName}</span>
-                      <br />
-                      {a.expandText}
-                    </div>
-                    {a.memo && (
-                      <>
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setMemoOpen((m) => ({ ...m, [a.id]: !m[a.id] }));
-                          }}
-                          className="si-press mt-2 flex items-center gap-1.5"
-                          style={{ fontFamily: jaFont, fontSize: 11, color: "#5A6B69" }}
-                        >
-                          この敵の特徴
-                          <span style={{ fontSize: 9 }}>{memoOpen[a.id] ? "▲" : "▼"}</span>
-                        </button>
-                        {memoOpen[a.id] &&
-                          a.memo.map((m, i) => (
-                            <div
-                              key={i}
-                              style={{
-                                fontFamily: jaFont,
-                                fontSize: 11,
-                                color: "#5A6B69",
-                                lineHeight: 1.85,
-                                marginTop: i === 0 ? 6 : 2,
-                              }}
-                            >
-                              ・{m}
-                            </div>
-                          ))}
-                      </>
-                    )}
-                  </div>
-
-                  {a.levels.map((l) => {
-                    const key = `${a.id}:${l.lv}`;
-                    const checked = !!done[key];
-                    return (
-                      <button
-                        key={key}
-                        onClick={() => toggle(key)}
-                        className="si-press w-full flex gap-3 items-start text-left py-2.5"
-                        style={{ borderTop: l.lv === 0 ? "none" : "1px solid rgba(60,80,78,.18)" }}
-                      >
-                        <span
-                          className="shrink-0 mt-0.5 flex items-center justify-center"
+                      <div className="pb-3 mb-2" style={{ borderBottom: "1px solid rgba(60,80,78,.25)" }}>
+                        <div style={{ fontFamily: jaFont, fontSize: 11.5, color: "#3B4A48", lineHeight: 1.8 }}>
+                          追加敗北条件：<span style={{ fontWeight: 700 }}>{a.loss.name}</span>
+                          {a.loss.text && (
+                            <>
+                              <br />
+                              {a.loss.text}
+                            </>
+                          )}
+                        </div>
+                        <div
                           style={{
-                            width: 26,
-                            height: 26,
-                            borderRadius: 4,
-                            background: checked ? "#2C5C5A" : "rgba(255,255,255,.55)",
-                            border: `2px solid ${checked ? T.gold : "rgba(60,80,78,.35)"}`,
+                            fontFamily: jaFont,
+                            fontSize: 11.5,
+                            color: "#3B4A48",
+                            lineHeight: 1.8,
+                            marginTop: 4,
                           }}
-                          aria-hidden="true"
                         >
-                          {checked && (
-                            <svg viewBox="0 0 24 24" width="17" height="17" fill="none">
-                              <path
-                                d="M4 12.5l5.5 6L20 5.5"
-                                stroke="#E0B84E"
-                                strokeWidth="4"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                              />
-                            </svg>
-                          )}
-                        </span>
-                        <span className="flex-1">
-                          <span
-                            style={{
-                              fontFamily: jaFont,
-                              fontSize: 13.5,
-                              color: checked ? "#2C5C5A" : "#22302E",
-                              fontWeight: 700,
-                            }}
-                          >
-                            レベル{l.lv}　{l.rule}
-                          </span>
-                          <span
-                            className="block"
-                            style={{ fontFamily: jaFont, fontSize: 11, color: "#5A6B69", marginTop: 2 }}
-                          >
-                            不安カード {l.fear}
-                          </span>
-                          {l.text && (
-                            <span
-                              className="block"
-                              style={{
-                                fontFamily: jaFont,
-                                fontSize: 11.5,
-                                color: "#3B4A48",
-                                marginTop: 4,
-                                lineHeight: 1.85,
+                          ステージ2の拡大：<span style={{ fontWeight: 700 }}>{a.expandName}</span>
+                          <br />
+                          {a.expandText}
+                        </div>
+                        {a.memo && (
+                          <>
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setMemoOpen((m) => ({ ...m, [a.id]: !m[a.id] }));
                               }}
+                              className="si-press mt-2 flex items-center gap-1.5"
+                              style={{ fontFamily: jaFont, fontSize: 11, color: "#5A6B69" }}
                             >
-                              {l.text}
-                            </span>
-                          )}
-                        </span>
-                      </button>
-                    );
-                  })}
+                              この敵の特徴
+                              <span style={{ fontSize: 9 }}>{memoOpen[a.id] ? "▲" : "▼"}</span>
+                            </button>
+                            {memoOpen[a.id] &&
+                              a.memo.map((m, i) => (
+                                <div
+                                  key={i}
+                                  style={{
+                                    fontFamily: jaFont,
+                                    fontSize: 11,
+                                    color: "#5A6B69",
+                                    lineHeight: 1.85,
+                                    marginTop: i === 0 ? 6 : 2,
+                                  }}
+                                >
+                                  ・{m}
+                                </div>
+                              ))}
+                          </>
+                        )}
+                      </div>
+
+                      {a.levels.map((l) => {
+                        const key = `${a.id}:${l.lv}`;
+                        const checked = !!done[key];
+                        return (
+                          <div
+                            key={key}
+                            className="py-2.5"
+                            style={{ borderTop: l.lv === 0 ? "none" : "1px solid rgba(60,80,78,.18)" }}
+                          >
+                            <button
+                              onClick={() => toggle(key)}
+                              className="si-press w-full flex gap-3 items-start text-left"
+                            >
+                              {check(checked)}
+                              <span className="flex-1">
+                                <span
+                                  style={{
+                                    fontFamily: jaFont,
+                                    fontSize: 13.5,
+                                    color: checked ? "#2C5C5A" : "#22302E",
+                                    fontWeight: 700,
+                                  }}
+                                >
+                                  レベル{l.lv}　{l.rule}
+                                </span>
+                                <span
+                                  className="block"
+                                  style={{ fontFamily: jaFont, fontSize: 11, color: "#5A6B69", marginTop: 2 }}
+                                >
+                                  不安カード {l.fear}
+                                </span>
+                                {l.text && (
+                                  <span
+                                    className="block"
+                                    style={{
+                                      fontFamily: jaFont,
+                                      fontSize: 11.5,
+                                      color: "#3B4A48",
+                                      marginTop: 4,
+                                      lineHeight: 1.85,
+                                    }}
+                                  >
+                                    {l.text}
+                                  </span>
+                                )}
+                              </span>
+                            </button>
+
+                            <div className="mt-2 ml-9 flex flex-wrap gap-1.5">
+                              <span style={{ fontFamily: jaFont, fontSize: 9.5, color: "#7A8F82", alignSelf: "center" }}>
+                                ＋シナリオ
+                              </span>
+                              {SCENARIOS.map((sc) => {
+                                const ck = `${a.id}:${l.lv}:${sc.id}`;
+                                const on = !!done[ck];
+                                return (
+                                  <button
+                                    key={sc.id}
+                                    onClick={() => toggle(ck)}
+                                    className="si-press rounded-full"
+                                    style={{
+                                      fontFamily: jaFont,
+                                      fontSize: 10.5,
+                                      padding: "3px 9px",
+                                      color: on ? "#fff" : "#5A6B69",
+                                      background: on ? "#2C5C5A" : "rgba(255,255,255,.5)",
+                                      border: `1px solid ${on ? "#2C5C5A" : "rgba(60,80,78,.3)"}`,
+                                    }}
+                                  >
+                                    {on ? "✓ " : ""}{sc.name}
+                                  </button>
+                                );
+                              })}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
                 </div>
-              )}
-            </div>
-          );
-        })}
-      </div>
+              );
+            })}
+          </div>
+        </>
+      )}
+
+      {tab === "sc" && (
+        <div className="mt-6 space-y-4">
+          {SCENARIOS.map((sc) => {
+            const open = openSc === sc.id;
+            const checked = !!done[sc.id];
+            return (
+              <div key={sc.id}>
+                <button
+                  onClick={() => setOpenSc(open ? null : sc.id)}
+                  className="si-press relative w-full py-4 focus:outline-none"
+                >
+                  <div className="absolute inset-0" style={{ background: T.gold, clipPath: HEX_WIDE }} />
+                  <div
+                    className="absolute"
+                    style={{
+                      inset: "3px",
+                      clipPath: HEX_WIDE,
+                      background: `linear-gradient(165deg, ${T.slate} 0%, ${T.slate} 55%, ${T.slateDark} 100%)`,
+                    }}
+                  />
+                  <div className="relative flex items-center gap-3 px-6">
+                    <span
+                      className="shrink-0 inline-flex items-center justify-center"
+                      style={{
+                        width: 30,
+                        height: 30,
+                        borderRadius: 6,
+                        background: "rgba(0,0,0,.3)",
+                        border: `1px solid ${T.gold}`,
+                        color: T.parch,
+                        fontFamily: numFont,
+                        fontWeight: 900,
+                        fontSize: 14,
+                      }}
+                    >
+                      {sc.difficulty}
+                    </span>
+                    <div className="flex-1 text-left">
+                      <div
+                        className="text-white"
+                        style={{ fontFamily: jaFont, fontSize: 14, textShadow: "0 2px 3px rgba(0,0,0,.5)" }}
+                      >
+                        {sc.name}
+                      </div>
+                      <div style={{ fontFamily: jaFont, fontSize: 11, color: "#BBD3DE", marginTop: 3 }}>
+                        難易度 {sc.difficulty}{checked ? "　クリア済み" : ""}
+                      </div>
+                    </div>
+                    <span style={{ color: "#DCE6E4", fontSize: 11 }}>{open ? "▲" : "▼"}</span>
+                  </div>
+                </button>
+
+                {open && (
+                  <div
+                    className="mt-2 px-4 py-4"
+                    style={{
+                      background: "linear-gradient(180deg, #DFE8E6 0%, #CFDBD9 100%)",
+                      borderRadius: 4,
+                      boxShadow: "0 6px 14px rgba(0,0,0,.4)",
+                    }}
+                  >
+                    {sc.art && <ScenarioArt kind={sc.art} T={T} />}
+                    <button
+                      onClick={() => toggle(sc.id)}
+                      className="si-press w-full flex gap-3 items-center text-left pb-3 mb-2"
+                      style={{ borderBottom: "1px solid rgba(60,80,78,.25)" }}
+                    >
+                      {check(checked)}
+                      <span
+                        style={{
+                          fontFamily: jaFont,
+                          fontSize: 13,
+                          color: checked ? "#2C5C5A" : "#22302E",
+                          fontWeight: 700,
+                        }}
+                      >
+                        このシナリオをクリア済みにする
+                      </span>
+                    </button>
+
+                    {sc.intro && (
+                      <div
+                        className="mb-3"
+                        style={{ fontFamily: jaFont, fontSize: 11.5, color: "#3B4A48", lineHeight: 1.9 }}
+                      >
+                        {sc.intro}
+                      </div>
+                    )}
+
+                    {paraBlock("追加の敗北条件", sc.lose, "#7A3B33")}
+
+                    <div className="mb-2">
+                      <div style={{ fontFamily: jaFont, fontSize: 11.5, color: "#3B4A48", fontWeight: 700, marginBottom: 3 }}>
+                        ルールの変更
+                      </div>
+                      {sc.rules.map((t, i) => (
+                        <div key={i} className="flex gap-2" style={{ marginTop: i === 0 ? 0 : 5 }}>
+                          <span style={{ color: "#7A6A3A", fontSize: 10, lineHeight: 1.9 }}>◆</span>
+                          <span style={{ fontFamily: jaFont, fontSize: 11.5, color: "#3B4A48", lineHeight: 1.85 }}>
+                            {t}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+
+                    {paraBlock("相性のいい精霊", sc.good, "#2C5C5A")}
+                    {paraBlock("苦手になりやすい状況", sc.bad, "#7A3B33")}
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      )}
 
       <div
         className="mt-6 text-center"
@@ -3832,8 +4535,26 @@ const RULES = [
       {
         p: "「荒廃した島」になったあと、さらに荒廃を置ききって置けなくなった瞬間に敗北する。つまり荒廃には2段階の猶予がある。",
       },
+      { h: "「荒廃した島」の裏面効果" },
       {
-        note: "「プレイ人数×2＋1個」は後から入った公式調整。以前は人数×2個で、ソロだけ余裕が極端に少なかった。",
+        p: "荒廃カードは複数種あり、表を使い切って裏返ると、そのカード固有のペナルティが常時働き出す。どれも「島が壊れ始めた」ことを表す重い効果で、内容はカードごとに違う。代表的なものは次のとおり。",
+      },
+      {
+        ul: [
+          "荒廃が置かれるたびに追加で1つ荒廃が広がる（連鎖のように被害が増える）",
+          "各ターンの侵略者フェイズで、荒廃のある土地にさらに荒廃が足される",
+          "特定のアクション（略奪など）で受ける荒廃が増える",
+          "恐怖の獲得が鈍る、あるいは勝利条件がその場で厳しくなる",
+        ],
+      },
+      {
+        p: "いずれも「裏返ったら一気に苦しくなる」設計。だからこそ表のうちに荒廃を取り除いておくか、そもそも荒廃させない立ち回りが重要になる。",
+      },
+      {
+        p: "ソロプレイでは、裏面が「1人あたり2荒廃」しか許さない特に厳しい荒廃カードを引いた場合、使わずに他の未使用カードから引き直してよい（公式の救済ルール）。",
+      },
+      {
+        note: "「プレイ人数×2＋1個」は後から入った公式調整。以前は人数×2個で、ソロだけ余裕が極端に少なかった。裏面の正確な効果は引いた荒廃カードの記載に従う。イベントを使う場合は荒廃カードの使用が前提になる。",
       },
       { note: "「存在マーカーから〇距離」の表記なら、マーカー1つの土地でも聖地でも起点にできる。聖地アイコンで指定されている場合だけ、聖地のみが起点。" },
     ],
@@ -3849,6 +4570,19 @@ const RULES = [
           "侵略者の遠征を行う",
           "この状態からゲームスタート",
         ],
+      },
+      { h: "島ボードの表と裏" },
+      {
+        p: "標準セットの島ボードは4枚（A・B・C・D）あり、それぞれ両面仕様。表面と裏面（E・F・G・H）で地形の配置が違う。",
+      },
+      {
+        p: "表面は山岳・湿地・密林・沙漠がバランスよく1つずつ並ぶ入門〜通常向け。裏面はいわゆる「裏マップ」で、同じ地形が隣り合ったり偏ったりした変則配置になっている上級者向け。",
+      },
+      {
+        p: "裏面は特定の地形を条件にする精霊や能力の使い勝手が変わり、難易度と再プレイ性が上がる。慣れないうちは表面、慣れてきたら裏面、という使い分けが目安。",
+      },
+      {
+        note: "「基本プレイ方針」でボードごとの相性に触れているのはこの地形配置のこと（例：大海の飢えた一飲みはボードDを避けたい）。どの面を使うかは準備の最初に決める。",
       },
     ],
   },
@@ -3951,6 +4685,157 @@ const RULES = [
       { h: "④ カードの移動" },
       {
         p: "遠征まで終えたら、表になっている侵略者カードを左に1つずつスライドさせる。略奪の枠にあったカードは捨て札になる。",
+      },
+    ],
+  },
+  {
+    id: "tokens",
+    title: "特殊トークン",
+    blocks: [
+      {
+        p: "拡張「枝と鉤爪」以降で登場する追加のトークン。土地や侵略者に置かれ、決まったタイミングで自動的に効果を発揮する。発動条件を満たしたら使用は強制で、そのアクション自体がスキップされた場合は消費されない。",
+      },
+      { h: "自然トークン（緑）" },
+      {
+        p: "遠征のときに働く。遠征が起きる土地に自然トークンがあると、その遠征を1つ止める（遠征隊が置かれない）。侵略者の広がりを直接せき止める、防御寄りのトークン。",
+      },
+      { h: "疫病トークン（紫）" },
+      {
+        p: "建設のときに働く。建設が起きる土地に疫病トークンがあると、その建設を1つ止める。町や都市が増えるのを遅らせられる。",
+      },
+      { h: "混乱トークン（青）" },
+      {
+        p: "略奪のときに働く。略奪する侵略者に混乱トークンが乗っていると、その侵略者は略奪に参加しない（攻撃力に数えない）。1つの侵略者に複数置くこともできる。",
+      },
+      { h: "悪地トークン（灰）" },
+      {
+        p: "ダメージに関わる。悪地トークンがある土地で侵略者がダメージを受けるとき、1つのアクションで受けるダメージの合計が+1される。個々のコマごとや、1アクション内の各ダメージごとではない点に注意。1枚の能力で2回ダメージを与える場合、+1はどちらに乗せてもよい。悪地は「与える」ダメージを増やすものではなく、侵略者が「受ける」ダメージを増やすもの。",
+      },
+      { h: "カードが参照するトークン" },
+      {
+        p: "以下は自動発動しない。それ自体には決まったタイミングの効果がなく、これらを参照するカードや様相とセットで初めて働く。",
+      },
+      { h: "獣トークン" },
+      {
+        p: "「枝と鉤爪」で登場。獣を配置したり、獣の有無を条件にしたりするカードが使う（例：獣がある土地で+1ダメージ、獣を1つ追加する、獣があれば防御4）。獣トークン単体では何も起こらない。炎影の『家畜の凶暴化』『守護者の蛇』『徘徊する黒豹』などが獣を扱う。",
+      },
+      { h: "対立トークン" },
+      {
+        p: "侵略者同士を争わせるトークン。効果はカードや様相ごとに指定される（例：炎影の様相『狂気』や一部の大能力・不安カードで、対立を持つ侵略者が同じ土地の他の侵略者にダメージを与える）。恐怖を稼ぎにくい精霊のフィニッシャーとして噛み合うことがある。",
+      },
+      {
+        note: "自然＝遠征、疫病＝建設、混乱＝略奪、悪地＝被ダメージ、と対応を覚えると使いどころが掴みやすい。これらはそのフェイズ／アクションが実際に行われたときだけ消費される。獣・対立は自動発動せず、参照するカードがあって初めて意味を持つ。",
+      },
+    ],
+  },
+  {
+    id: "events",
+    title: "イベント",
+    blocks: [
+      {
+        p: "拡張「枝と鉤爪」以降で登場する要素。侵略者フェイズの頭で毎回1枚めくって処理する、島そのものの出来事。決まった順で攻めてくる侵略者とは別の、予測しづらい変化を持ち込む。",
+      },
+      { h: "処理のタイミング" },
+      {
+        p: "侵略者フェイズの流れは、荒廃した島カードの効果 → イベント → 略奪 → 建設 → 遠征 → カードの移動。イベントは略奪より前に、1枚だけ解決する。",
+      },
+      {
+        p: "公式ルールでは、1ターン目もイベントカードは引く（めくる）が、解決はせずにそのまま捨てる。2ターン目以降は毎ターン1枚引いて解決する。1ターン目から効果を解決すると、都市が消えて即勝利のような振れ幅の大きい展開が起きやすいための措置。",
+      },
+      { h: "イベントの中身" },
+      {
+        p: "1枚のイベントカードには、精霊に有利な効果と不利な効果の両方が書かれていることが多い。状況によって嬉しかったり厳しかったりするが、理不尽になりすぎないよう作られている。",
+      },
+      {
+        p: "多くのカードは上から順に解決する。ダハンを動かす、侵略者を動かす、トークンを置く、荒廃を広げるなど内容はさまざま。選択を求められるものもある。",
+      },
+      { h: "コスト付きのイベント" },
+      {
+        p: "一部のイベントは、精霊力を支払えば被害を軽くできる（あるいは効果を得られる）。支払えないときは、能力カードを1枚忘却することで代用する形になることがある。忘却で浮くぶんを支払いに充てる、という仕組み。",
+      },
+      { h: "遠征隊の増減と絡む点" },
+      {
+        p: "イベントによる押し出しや破壊も、盤面のトークンや荒廃と同じルールで処理する。イベントが与えた破壊でも恐怖は発生し、荒廃した土地の存在は破壊される。",
+      },
+      {
+        note: "イベントは「枝と鉤爪」の目玉要素。荒廃カードの使用が前提になるので、イベントを入れるなら荒廃カードも必ず使う。第三拡張の一部イベントは影響が大きすぎて禁止カードに指定されている（FAQ③参照）。",
+      },
+    ],
+  },
+  {
+    id: "expansions",
+    title: "拡張で増える要素",
+    blocks: [
+      {
+        p: "どの拡張が何を足すかの見取り図。購入予定の「枝と鉤爪」「ひび割れた大地（ジャグ・アース）」は付随ルールも詳しく載せる。基本セットは精霊8体・敵対国いくつか・シナリオなしで、拡張ごとに精霊・敵対国・シナリオ・不安／荒廃カードが増え、さらに新しい仕組みが加わる。",
+      },
+
+      { h: "■ 枝と鉤爪（第1拡張）" },
+      {
+        p: "新精霊2体（葉陰に潜む鋭い牙、禁断の大地の番人）と敵対国フランス（プランテーション植民地）。追加カードとして不安・荒廃・能力カードも増える。",
+      },
+      { h: "枝と鉤爪：イベント" },
+      {
+        p: "侵略者フェイズの頭で毎ターン1枚めくって解決する（詳細はルールブックの「イベント」章を参照）。荒廃カードの使用が必須になる。",
+      },
+      { h: "枝と鉤爪：4種のトークン" },
+      {
+        p: "土地や侵略者に置かれ、決まったタイミングで自動発動する。詳細は「特殊トークン」章を参照。要点だけ再掲する。",
+      },
+      {
+        ul: [
+          "自然（Wilds）… 次の遠征を1つ止める",
+          "疫病（Disease）… 次の建設を1つ止める",
+          "混乱（Strife）… その侵略者を略奪に参加させない。侵略者コマに乗る唯一のトークン",
+          "獣（Beast）… それ自体は自動発動せず、参照するカードとセットで働く",
+        ],
+      },
+      {
+        p: "自然・疫病・混乱は効果を発揮すると消える。獣は取り除かれない限り残る。トークンは1つの土地・1体の侵略者に何個でも置ける。",
+      },
+
+      { h: "■ ひび割れた大地（ジャグ・アース／第2拡張）" },
+      {
+        p: "最大の拡張。新精霊10体、敵対国2つ（ロシア・ツァーリ国、スウェーデン王国）、シナリオ3種、島ボード2枚、イベント30枚、能力・不安・荒廃カード多数を追加。単体でも遊べるが、枝と鉤爪と用語・トークンを共有するので両方あると噛み合う。",
+      },
+      { h: "ひび割れた大地：様相（アスペクト）" },
+      {
+        p: "基本セットの低複雑度4精霊（稲妻・大河・大地・炎影）に、先天能力や特殊ルールを差し替える追加パネル。合計6枚の様相が収録されている。弱点を補ったり別の遊び方にしたりする。このアプリで触れている炎影の『狂気』もこの様相の一種。",
+      },
+      { h: "ひび割れた大地：悪地トークン（Badlands）" },
+      {
+        p: "この拡張だけで追加される5種類目のトークン。悪地のある土地で、人間を表すコマ（侵略者とダハンの両方）が受けるダメージが増える。侵略者を削る助けになる一方、味方のダハンにも跳ね返るので諸刃。1アクションで受けるダメージの合計に加算される（各ダメージごとではない）。",
+      },
+      { h: "ひび割れた大地：孤立（Isolate）" },
+      {
+        p: "土地を1ターンのあいだ他の土地から切り離す新キーワード。孤立した土地は遠征の対象にならず、遠征の供給元にもならない。そこにある町や都市は無いものとして扱ったうえで、周囲の遠征を判定する。侵略者の広がりを一時的にせき止める使い方をする。",
+      },
+      { h: "ひび割れた大地：新しい遊び方" },
+      {
+        p: "敵対国を2つ組み合わせる、島を分割した「多島海（アーキペラゴ）」配置で遊ぶ、といったバリアントが追加される。島ボードの並べ方（クラブ、対岸、海岸線ほか）の選択肢も増える。",
+      },
+      { h: "ひび割れた大地：プレイ人数が6人まで" },
+      {
+        p: "基本セットは1〜4人。ひび割れた大地を入れると最大6人まで対応する。5〜6人ぶんの存在マーカー・コマや、島6枚を並べる配置がこの拡張に入っているため。枝と鉤爪は精霊やコマを足すが、人数の上限自体は変えない。",
+      },
+      {
+        p: "ただし1人あたりの手番が重いゲームなので、6人だと1ゲームがかなり長くなる。多人数のときは各自の担当エリアを決め、フェイズごとに全員同時に動くとテンポを保ちやすい。",
+      },
+
+      { h: "■ ネイチャー・インカーネイト（第3拡張）" },
+      {
+        p: "遊ぶには基本＋ひび割れた大地が必要。新精霊8体、約20の様相、新敵対国ハプスブルク（採掘植民地）、シナリオ2種を追加。目玉は「インカーナ」＝精霊が盤上に実体を持ち、そのコマを動かして戦う新メカニクス。全体に複雑度が高い。",
+      },
+      { h: "■ 羽と炎（フェザー＆フレイム）" },
+      {
+        p: "プロモ2種をまとめた小型拡張。高複雑度の新精霊といくつかの様相を追加する。大きな新ルールというより精霊の追加が主。",
+      },
+      { h: "■ ホライズン（入門用スタンドアロン）" },
+      {
+        p: "単体で遊べる入門版。低複雑度の精霊が中心で、これから始める人向け。基本セットとも組み合わせられる。",
+      },
+      {
+        note: "導入順の目安：まず敵対国で難易度を上げ、次に枝と鉤爪でイベントとトークン、さらに深めるならひび割れた大地。ひび割れた大地はトークンやイベントを枝と鉤爪と共有するので、2つ一緒だと最も噛み合う。",
       },
     ],
   },
@@ -4083,7 +4968,7 @@ const RULES = [
       {
         ul: [
           "荒廃カード用の荒廃トークンは「プレイ人数×2＋1個」。ソロなら3個。人数による有利不利をならすための調整",
-          "イベントカードはラウンド2から処理する。ラウンド1は処理しない",
+          "1ターン目もイベントカードは引くが、解決せずに捨てる。2ターン目から毎ターン1枚を解決する",
           "ソロプレイでは、荒廃後に荒廃トークンを2個しか置かない荒廃カードは使わず引き直す",
         ],
       },
@@ -4126,7 +5011,7 @@ const RULES = [
         ],
       },
       {
-        note: "いずれも影響が大きすぎたカード。War Touches the Islands Shores は1ターン目に都市が消えて即勝利、という事態が起きたため、イベントをラウンド2からにするルール変更のきっかけにもなった。",
+        note: "いずれも影響が大きすぎたカード。War Touches the Islands Shores は1ターン目に都市が消えて即勝利、という事態が起きたため、1ターン目はイベントを引いても解決せず捨てる、というルールのきっかけにもなった。",
       },
     ],
   },
@@ -4297,9 +5182,8 @@ const RULES = [
   },
 ];
 
-function RulesScreen({ onBack }) {
+function RulesScreen({ onBack, chapter, setChapter }) {
   const T = useT();
-  const [chapter, setChapter] = useState(null);
   useScrollTop(chapter);
   const idx = RULES.findIndex((r) => r.id === chapter);
   const ch = idx >= 0 ? RULES[idx] : null;
@@ -4420,17 +5304,94 @@ function RulesScreen({ onBack }) {
 /* ============ ルート ============ */
 function SpiritIslandTools() {
   const [screen, setScreen] = useState("menu");
+  const [energyFrom, setEnergyFrom] = useState("menu");
+  const [rulesChapter, setRulesChapter] = useState(null);
+  const [advTab, setAdvTab] = useState("adv");
+  const [spiritSetTab, setSpiritSetTab] = useState("基本");
   const [spiritId, setSpiritId] = useState(null);
   const spirit = SPIRITS.find((s) => s.id === spiritId) || null;
   const T = themeFor(spiritId);
   const energyStore = useEnergyStore();
   useScrollTop(screen);
 
+  // スワイプの戻る／進む。画面ごとの意味に合わせる
+  const goBack = () => {
+    if (screen === "menu") return;
+    if (screen === "energy") setScreen(energyFrom);
+    else setScreen("menu");
+  };
+  const goForward = () => {
+    if (screen === "play") setScreen("tier");
+    else if (screen === "tier") setScreen("play");
+  };
+  // 精霊まわりの3画面を横スワイプでつなぐ： 基本プレイ方針 ↔ Tier表 ↔ トラッカー
+  const GUIDE_ORDER = ["play", "tier", "energy"];
+  const swipeGuide = (dir) => {
+    const i = GUIDE_ORDER.indexOf(screen);
+    if (i === -1) return false;
+    const ni = i + (dir < 0 ? 1 : -1); // 左スワイプ=次へ / 右スワイプ=前へ
+    if (ni < 0 || ni >= GUIDE_ORDER.length) return false;
+    const target = GUIDE_ORDER[ni];
+    // トラッカーへ入るときは戻り先を記録しておく
+    if (target === "energy") setEnergyFrom(screen);
+    setScreen(target);
+    return true;
+  };
+  // ルールブックの章を開いているとき、左=次章 / 右=前章。先頭で右なら目次へ
+  const swipeRules = (dir) => {
+    if (screen !== "rules" || !rulesChapter) return false;
+    const i = RULES.findIndex((r) => r.id === rulesChapter);
+    if (i === -1) return false;
+    if (dir < 0) {
+      if (i < RULES.length - 1) setRulesChapter(RULES[i + 1].id);
+      return true;
+    }
+    setRulesChapter(i > 0 ? RULES[i - 1].id : null);
+    return true;
+  };
+  const swipeAdv = () => {
+    if (screen !== "adv") return false;
+    setAdvTab((t) => (t === "adv" ? "sc" : "adv"));
+    return true;
+  };
+  const swipeSpiritSet = () => {
+    if (screen !== "spirit") return false;
+    setSpiritSetTab((t) => (t === "基本" ? "枝と鉤爪" : "基本"));
+    return true;
+  };
+  const touch = useRef(null);
+  const onTouchStart = (e) => {
+    const t = e.touches[0];
+    touch.current = { x: t.clientX, y: t.clientY, t: Date.now() };
+  };
+  const onTouchEnd = (e) => {
+    const s0 = touch.current;
+    touch.current = null;
+    if (!s0) return;
+    const t = e.changedTouches[0];
+    const dx = t.clientX - s0.x;
+    const dy = t.clientY - s0.y;
+    // 横移動が十分大きく、縦揺れが小さく、素早いフリックのときだけ
+    if (Math.abs(dx) < 70 || Math.abs(dy) > 55 || Date.now() - s0.t > 600) return;
+    // 精霊まわりの3画面はスワイプで順送り
+    if (swipeGuide(dx)) return;
+    // ルールブックの章を開いているときは章を前後に送る
+    if (swipeRules(dx)) return;
+    // 達成チェッカーは左右どちらでも敵対国↔シナリオを切り替え
+    if (swipeAdv()) return;
+    // 精霊選択は左右どちらでも基本↔枝と鉤爪を切り替え
+    if (swipeSpiritSet()) return;
+    if (dx > 0) goBack();
+    else goForward();
+  };
+
   return (
     <ThemeCtx.Provider value={T}>
     <div
       className="min-h-screen w-full flex justify-center"
       style={{ background: T.bg, transition: "background 420ms ease" }}
+      onTouchStart={onTouchStart}
+      onTouchEnd={onTouchEnd}
     >
       <style>{`
         .si-press { transition: transform 90ms ease; }
@@ -4443,7 +5404,10 @@ function SpiritIslandTools() {
         }
       `}</style>
 
-      <div className="w-full max-w-sm px-5 pt-6 pb-14">
+      <div
+        className="w-full max-w-sm px-5 pb-14"
+        style={{ paddingTop: "calc(env(safe-area-inset-top, 0px) + 28px)" }}
+      >
         {screen === "menu" && (
           <div>
             <IslandHeader spirit={spirit} />
@@ -4453,9 +5417,20 @@ function SpiritIslandTools() {
                 label="精霊を選ぶ"
                 sub={spirit ? spirit.ja : "未選択"}
                 icon="spirit"
-                onPress={() => setScreen("spirit")}
+                onPress={() => {
+                  const cur = SPIRITS.find((s) => s.id === spiritId);
+                  if (cur) setSpiritSetTab(cur.set);
+                  setScreen("spirit");
+                }}
               />
-              <SlateButton label="精霊力トラッカー" icon="energy" onPress={() => setScreen("energy")} />
+              <SlateButton
+                label="精霊力トラッカー"
+                icon="energy"
+                onPress={() => {
+                  setEnergyFrom("menu");
+                  setScreen("energy");
+                }}
+              />
               <SlateButton
                 label="精霊ガイド"
                 sub="基本プレイ方針・カードTier表"
@@ -4471,6 +5446,8 @@ function SpiritIslandTools() {
           <SpiritScreen
             onBack={() => setScreen("menu")}
             current={spiritId}
+            tab={spiritSetTab}
+            setTab={setSpiritSetTab}
             onPick={(id) => {
               if (id !== spiritId) energyStore.resetAll();
               setSpiritId(id);
@@ -4479,13 +5456,18 @@ function SpiritIslandTools() {
           />
         )}
         {screen === "energy" && (
-          <EnergyScreen onBack={() => setScreen("menu")} store={energyStore} />
+          <EnergyScreen onBack={() => setScreen(energyFrom)} store={energyStore} />
         )}
         {screen === "play" && (
           <PlaybookScreen
             onBack={() => setScreen("menu")}
             spirit={spirit}
             onTier={() => setScreen("tier")}
+            onEnergy={() => {
+              setEnergyFrom("play");
+              setScreen("energy");
+            }}
+            energy={energyStore.energy}
           />
         )}
         {screen === "tier" && (
@@ -4493,10 +5475,27 @@ function SpiritIslandTools() {
             onBack={() => setScreen("menu")}
             spirit={spirit}
             onPlay={() => setScreen("play")}
+            onEnergy={() => {
+              setEnergyFrom("tier");
+              setScreen("energy");
+            }}
+            energy={energyStore.energy}
           />
         )}
-        {screen === "adv" && <AchievementScreen onBack={() => setScreen("menu")} />}
-        {screen === "rules" && <RulesScreen onBack={() => setScreen("menu")} />}
+        {screen === "adv" && (
+          <AchievementScreen
+            onBack={() => setScreen("menu")}
+            tab={advTab}
+            setTab={setAdvTab}
+          />
+        )}
+        {screen === "rules" && (
+          <RulesScreen
+            onBack={() => setScreen("menu")}
+            chapter={rulesChapter}
+            setChapter={setRulesChapter}
+          />
+        )}
       </div>
     </div>
     </ThemeCtx.Provider>
