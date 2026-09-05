@@ -1,5 +1,5 @@
 /* オフラインでも開けるようにする簡易サービスワーカー */
-const CACHE = "si-tools-v2";
+const CACHE = "si-tools-v3";
 const ASSETS = [
   "./",
   "./index.html",
@@ -30,6 +30,27 @@ self.addEventListener("activate", (e) => {
 
 self.addEventListener("fetch", (e) => {
   if (e.request.method !== "GET") return;
+
+  const url = new URL(e.request.url);
+  const isAppFile =
+    url.origin === self.location.origin &&
+    /\.(html|jsx|css|webmanifest)$|\/$/.test(url.pathname);
+
+  if (isAppFile) {
+    // アプリ本体は常にネットワークを優先し、取れたら新しいものをキャッシュする
+    e.respondWith(
+      fetch(e.request)
+        .then((res) => {
+          const copy = res.clone();
+          caches.open(CACHE).then((c) => c.put(e.request, copy)).catch(() => {});
+          return res;
+        })
+        .catch(() => caches.match(e.request))
+    );
+    return;
+  }
+
+  // 画像やCDNのライブラリはキャッシュ優先（更新頻度が低いため）
   e.respondWith(
     caches.match(e.request).then((hit) => {
       if (hit) return hit;
