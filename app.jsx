@@ -2433,6 +2433,62 @@ const TIERS = {
   },
 };
 
+/* ============ 効果音 ============ */
+let audioCtx = null;
+let soundOn = true;
+try {
+  soundOn = localStorage.getItem("si-sound") !== "off";
+} catch (e) {
+  /* 参照できない環境では鳴らす */
+}
+const setSoundOn = (v) => {
+  soundOn = v;
+  try {
+    localStorage.setItem("si-sound", v ? "on" : "off");
+  } catch (e) {}
+};
+// ごく短いノイズを鳴らしてカチッという打鍵音にする
+function click(freq = 2200, dur = 0.028, vol = 0.09) {
+  if (!soundOn) return;
+  try {
+    if (!audioCtx) {
+      const AC = window.AudioContext || window.webkitAudioContext;
+      if (!AC) return;
+      audioCtx = new AC();
+    }
+    if (audioCtx.state === "suspended") audioCtx.resume();
+    const t = audioCtx.currentTime;
+    const len = Math.floor(audioCtx.sampleRate * dur);
+    const buf = audioCtx.createBuffer(1, len, audioCtx.sampleRate);
+    const data = buf.getChannelData(0);
+    for (let i = 0; i < len; i++) {
+      // 後ろほど急速に減衰させて「カチッ」に近づける
+      data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, 3);
+    }
+    const src = audioCtx.createBufferSource();
+    src.buffer = buf;
+    const bp = audioCtx.createBiquadFilter();
+    bp.type = "bandpass";
+    bp.frequency.setValueAtTime(freq, t);
+    bp.Q.value = 1.4;
+    const g = audioCtx.createGain();
+    g.gain.setValueAtTime(vol, t);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    src.connect(bp).connect(g).connect(audioCtx.destination);
+    src.start(t);
+    src.stop(t + dur + 0.01);
+  } catch (e) {
+    /* 音が出せなくても操作は続く */
+  }
+}
+const sfx = {
+  plus: () => click(2600, 0.026, 0.09),
+  minus: () => click(1500, 0.03, 0.09),
+  tap: () => click(2000, 0.024, 0.07),
+  nav: () => click(1800, 0.026, 0.07),
+  undo: () => click(1100, 0.034, 0.08),
+};
+
 /* ============ 共通パーツ ============ */
 function ScreenTabs({ current, onPlay, onTier, onEnergy, energy, show }) {
   const T = useT();
@@ -2472,9 +2528,8 @@ function ScreenTabs({ current, onPlay, onTier, onEnergy, energy, show }) {
             style={{ width: 66, color: T.parch, fontFamily: jaFont, fontSize: 11 }}
             aria-label="精霊力トラッカー"
           >
-            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke={T.gold} strokeWidth="1.8">
-              <circle cx="12" cy="12" r="8" />
-              <circle cx="12" cy="12" r="3.2" />
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke={T.gold} strokeWidth="1.8" strokeLinejoin="round">
+              <path d="M13 2.8L5.2 13.4h5.3L10 21.2l8-10.8h-5.4z" />
             </svg>
             <span style={{ fontFamily: numFont, fontWeight: 900, fontSize: 15, color: "#fff" }}>
               {energy}
@@ -2482,72 +2537,6 @@ function ScreenTabs({ current, onPlay, onTier, onEnergy, energy, show }) {
           </button>
         </>
       )}
-    </div>
-  );
-}
-
-function Banner({ title, onBack, onNext }) {
-  const T = useT();
-  return (
-    <div className="relative pt-1">
-      {onBack && (
-        <button
-          onClick={onBack}
-          className="si-press absolute left-0 top-1 h-12 w-14 flex items-center justify-center"
-          aria-label="戻る"
-        >
-          <span
-            className="block"
-            style={{
-              width: 0,
-              height: 0,
-              borderTop: "11px solid transparent",
-              borderBottom: "11px solid transparent",
-              borderRight: `16px solid ${RED}`,
-              filter: "drop-shadow(0 2px 2px rgba(0,0,0,.5))",
-            }}
-          />
-        </button>
-      )}
-      {onNext && (
-        <button
-          onClick={onNext}
-          className="si-press absolute right-0 top-1 h-12 w-14 flex items-center justify-center"
-          aria-label="次の項目へ"
-        >
-          <span
-            className="block shrink-0"
-            style={{
-              width: 0,
-              height: 0,
-              borderTop: "11px solid transparent",
-              borderBottom: "11px solid transparent",
-              borderLeft: `16px solid #E0B84E`,
-              filter: "drop-shadow(0 2px 2px rgba(0,0,0,.5))",
-            }}
-          />
-        </button>
-      )}
-      <div
-        className="py-3 px-8 text-center mx-8"
-        style={{
-          background: `linear-gradient(180deg, #F0E2B6 0%, ${T.parch} 55%, #D9C48D 100%)`,
-          clipPath:
-            "polygon(0% 22%, 3% 4%, 50% 0%, 97% 5%, 100% 24%, 99% 96%, 50% 100%, 2% 95%)",
-          boxShadow: "0 6px 14px rgba(0,0,0,.45)",
-        }}
-      >
-        <div
-          style={{
-            fontFamily: jaFont,
-            fontSize: "clamp(17px, 5.5vw, 24px)",
-            color: "#2B2117",
-            letterSpacing: "0.06em",
-          }}
-        >
-          {title}
-        </div>
-      </div>
     </div>
   );
 }
@@ -2561,8 +2550,7 @@ const MENU_ICONS = {
   ),
   energy: (
     <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" strokeWidth="1.7">
-      <circle cx="12" cy="12" r="8" />
-      <circle cx="12" cy="12" r="3.4" />
+      <path d="M13 2.8L5.2 13.4h5.3L10 21.2l8-10.8h-5.4z" strokeLinejoin="round" />
     </svg>
   ),
   play: (
@@ -2590,6 +2578,126 @@ const MENU_ICONS = {
     </svg>
   ),
 };
+
+function Banner({ title, onBack, onNext, onPrev, icon }) {
+  const T = useT();
+  const tri = (dir) => (
+    <span
+      className="block"
+      style={{
+        width: 0,
+        height: 0,
+        borderTop: "9px solid transparent",
+        borderBottom: "9px solid transparent",
+        [dir === "left" ? "borderRight" : "borderLeft"]: `13px solid #E0B84E`,
+        filter: "drop-shadow(0 1px 1px rgba(0,0,0,.45))",
+      }}
+    />
+  );
+  return (
+    <div className="relative pt-1">
+      {onBack && (
+        <button
+          onClick={() => {
+            sfx.nav();
+            onBack();
+          }}
+          className="si-press absolute left-0 top-1 h-12 w-12 flex items-center justify-center"
+          style={{ zIndex: 2 }}
+          aria-label="戻る"
+        >
+          <span
+            className="block"
+            style={{
+              width: 0,
+              height: 0,
+              borderTop: "11px solid transparent",
+              borderBottom: "11px solid transparent",
+              borderRight: `16px solid ${RED}`,
+              filter: "drop-shadow(0 2px 2px rgba(0,0,0,.5))",
+            }}
+          />
+        </button>
+      )}
+
+      <div
+        className="relative py-3 px-3 mx-9"
+        style={{
+          background: `linear-gradient(180deg, #F0E2B6 0%, ${T.parch} 55%, #D9C48D 100%)`,
+          clipPath:
+            "polygon(0% 22%, 3% 4%, 50% 0%, 97% 5%, 100% 24%, 99% 96%, 50% 100%, 2% 95%)",
+          boxShadow: "0 6px 14px rgba(0,0,0,.45)",
+        }}
+      >
+        <div className="flex items-center justify-center gap-2">
+          <span className="shrink-0 flex items-center justify-center" style={{ width: 22 }}>
+            {onPrev ? (
+              <button
+                onClick={() => {
+                  sfx.nav();
+                  onPrev();
+                }}
+                className="si-press flex items-center justify-center"
+                style={{ width: 22, height: 22 }}
+                aria-label="前の項目へ"
+              >
+                {tri("left")}
+              </button>
+            ) : null}
+          </span>
+
+          <span
+            className="flex-1 text-center"
+            style={{
+              fontFamily: jaFont,
+              fontSize: "clamp(16px, 5vw, 22px)",
+              color: "#2B2117",
+              letterSpacing: "0.06em",
+            }}
+          >
+            {title}
+          </span>
+
+          <span className="shrink-0 flex items-center justify-center" style={{ width: 22 }}>
+            {onNext ? (
+              <button
+                onClick={() => {
+                  sfx.nav();
+                  onNext();
+                }}
+                className="si-press flex items-center justify-center"
+                style={{ width: 22, height: 22 }}
+                aria-label="次の項目へ"
+              >
+                {tri("right")}
+              </button>
+            ) : null}
+          </span>
+        </div>
+      </div>
+
+      {icon && (
+        <span
+          className="absolute flex items-center justify-center"
+          style={{
+            left: 2,
+            bottom: -6,
+            width: 34,
+            height: 34,
+            borderRadius: 6,
+            background: "rgba(20,26,22,.75)",
+            border: `1px solid ${T.gold}88`,
+            color: T.parch,
+            boxShadow: "0 3px 8px rgba(0,0,0,.5)",
+            zIndex: 1,
+          }}
+        >
+          {icon}
+        </span>
+      )}
+    </div>
+  );
+}
 
 function Motif({ kind, T }) {
   const line = { stroke: T.glow, fill: "none", strokeLinecap: "round", strokeLinejoin: "round" };
@@ -2783,7 +2891,10 @@ function SlateButton({ label, sub, icon, onPress }) {
   const T = useT();
   return (
     <button
-      onClick={onPress}
+      onClick={() => {
+        sfx.tap();
+        onPress && onPress();
+      }}
       className="si-press relative w-full py-4 focus:outline-none"
       style={{ minHeight: 64 }}
     >
@@ -2839,7 +2950,7 @@ function HexButton({ label, tone, onPress }) {
     <button
       onClick={onPress}
       className="si-press relative w-full select-none focus:outline-none"
-      style={{ aspectRatio: "1.8 / 1" }}
+      style={{ aspectRatio: "2.6 / 1" }}
       aria-label={label}
     >
       <div className="absolute inset-0" style={{ background: T.gold, clipPath: HEX }} />
@@ -2856,7 +2967,7 @@ function HexButton({ label, tone, onPress }) {
         style={{
           fontFamily: numFont,
           fontWeight: 700,
-          fontSize: "clamp(20px, 6vw, 30px)",
+          fontSize: "clamp(18px, 5vw, 26px)",
           textShadow: "0 2px 4px rgba(0,0,0,.45)",
         }}
       >
@@ -2893,6 +3004,7 @@ function useEnergyStore() {
   const [income, setIncome] = useState(1);
   const [turn, setTurn] = useState(1);
   const [flash, setFlash] = useState(0);
+  const [log, setLog] = useState([]); // 操作履歴（新しいものが先頭）
   const undoStack = useRef([]);
   const loaded = useRef(false);
 
@@ -2905,6 +3017,7 @@ function useEnergyStore() {
           if (typeof s.energy === "number") setEnergy(s.energy);
           if (typeof s.income === "number") setIncome(s.income);
           if (typeof s.turn === "number") setTurn(s.turn);
+          if (Array.isArray(s.log)) setLog(s.log);
         }
       } catch (e) {
         /* 保存データなし。初期値で開始 */
@@ -2919,16 +3032,43 @@ function useEnergyStore() {
       try {
         storage.set(
           "si-energy-state",
-          JSON.stringify({ energy, income, turn })
+          JSON.stringify({ energy, income, turn, log: log.slice(0, 60) })
         );
       } catch (e) {
         /* 保存できなくても操作は続く */
       }
     })();
-  }, [energy, income, turn]);
+  }, [energy, income, turn, log]);
 
   const snap = () => {
-    undoStack.current = [...undoStack.current.slice(-19), { energy, turn }];
+    undoStack.current = [...undoStack.current.slice(-19), { energy, turn, log }];
+  };
+  // 増減が1秒以内に続いたら、向きに関わらず合計値としてまとめる
+  const push = (label, delta, after) => {
+    setLog((L) => {
+      const now = Date.now();
+      const head = L[0];
+      const canMerge =
+        head && delta !== 0 && head.delta !== 0 && now - head.at < 1000;
+      if (canMerge) {
+        const parts = [...(head.parts || [head.delta]), delta];
+        const sum = parts.reduce((a, b) => a + b, 0);
+        const merged = {
+          ...head,
+          parts,
+          delta: sum,
+          label: sum > 0 ? `+${sum}` : `${sum}`,
+          count: head.count + 1,
+          at: now,
+          after,
+        };
+        return [merged, ...L.slice(1)].slice(0, 60);
+      }
+      return [
+        { label, delta, parts: delta !== 0 ? [delta] : null, count: 1, at: now, after, turn },
+        ...L,
+      ].slice(0, 60);
+    });
   };
 
   return {
@@ -2936,132 +3076,300 @@ function useEnergyStore() {
     income,
     turn,
     flash,
+    log,
     setIncome,
     change: (d) => {
       snap();
-      setEnergy((e) => Math.max(0, e + d));
+      const after = Math.max(0, energy + d);
+      setEnergy(after);
       setFlash((f) => f + 1);
+      push(d > 0 ? `+${d}` : `${d}`, d, after);
     },
-    collect: () => {
+    nextTurn: () => {
       snap();
-      setEnergy((e) => e + income);
       setTurn((t) => t + 1);
-      setFlash((f) => f + 1);
+      push("ターン送り", 0, energy);
     },
     undo: () => {
       const p = undoStack.current.pop();
       if (!p) return;
       setEnergy(p.energy);
       setTurn(p.turn);
+      if (Array.isArray(p.log)) setLog(p.log);
       undoStack.current = [...undoStack.current];
     },
     reset: () => {
       snap();
       setEnergy(0);
       setTurn(1);
+      setLog([]);
     },
     resetAll: () => {
       undoStack.current = [];
       setEnergy(0);
       setIncome(1);
       setTurn(1);
+      setLog([]);
       setFlash((f) => f + 1);
     },
   };
 }
 
+function agoText(at, now) {
+  const sec = Math.max(0, Math.floor((now - at) / 1000));
+  if (sec < 60) return "たった今";
+  const min = Math.floor(sec / 60);
+  if (min < 60) return `${min}分前`;
+  const hr = Math.floor(min / 60);
+  return `${hr}時間${min % 60}分前`;
+}
+
 function EnergyScreen({ onBack, store }) {
   const T = useT();
   const [open, setOpen] = useState(false);
-  const { energy, income, turn, flash, setIncome, change, collect, undo, reset } = store;
+  const [now, setNow] = useState(Date.now());
+  const [logAll, setLogAll] = useState(false);
+  const LOG_HEAD = 5; // 通常時に見せる件数
+  const PARTS_HEAD = 8; // 計算式に並べる項の上限（タップで全表示）
+  const [openParts, setOpenParts] = useState({});
+  // 精霊力を動かしたら履歴の展開は閉じる
+  const bump = (d) => {
+    setLogAll(false);
+    setOpenParts({});
+    d > 0 ? sfx.plus() : sfx.minus();
+    change(d);
+  };
+  const { energy, turn, flash, log, change, nextTurn, undo, reset } = store;
 
-  const pips = Math.min(energy, 14);
+  // 履歴を開いている間は「何分前」の表示を更新し続ける
+  useEffect(() => {
+    const id = setInterval(() => setNow(Date.now()), 15000);
+    return () => clearInterval(id);
+  }, []);
+
 
   return (
     <div>
-      <Banner title="精霊力" onBack={onBack} />
-      <div
-        className="mt-6 text-center"
-        style={{ fontFamily: jaFont, color: "#9FBFA8", fontSize: 14, letterSpacing: "0.2em" }}
-      >
-        ターン {turn}
-      </div>
-      <div className="mt-1 text-center">
-        <div
+      <Banner title="精霊力" onBack={onBack} icon={MENU_ICONS.energy} />
+      <div className="mt-4 relative text-center">
+        <span
           key={flash}
-          className="si-pop"
+          className="si-pop inline-block"
           style={{
             fontFamily: numFont,
             fontWeight: 900,
-            fontSize: "clamp(84px, 32vw, 140px)",
+            fontSize: "clamp(64px, 21vw, 96px)",
             lineHeight: 1,
             color: "#FFFFFF",
             fontVariantNumeric: "tabular-nums",
-            textShadow: "0 6px 18px rgba(0,0,0,.5)",
+            textShadow: "0 4px 12px rgba(0,0,0,.5)",
           }}
         >
           {energy}
-        </div>
-      </div>
-      <div className="mt-4 flex flex-wrap justify-center gap-1.5 min-h-[14px]">
-        {Array.from({ length: pips }).map((_, i) => (
-          <span
-            key={i}
-            className="block h-3 w-3 rounded-full"
-            style={{
-              background: "radial-gradient(circle at 35% 30%, #F5DE9E, #B8912F)",
-              boxShadow: "0 1px 2px rgba(0,0,0,.5)",
-            }}
-          />
-        ))}
-        {energy > 14 && (
-          <span style={{ color: T.gold, fontFamily: numFont, fontSize: 13 }}>
-            +{energy - 14}
-          </span>
-        )}
+        </span>
+        <span
+          className="absolute right-0"
+          style={{
+            bottom: 4,
+            fontFamily: jaFont,
+            color: "#7A8F82",
+            fontSize: 12,
+            letterSpacing: "0.12em",
+          }}
+        >
+          ターン {turn}
+        </span>
       </div>
 
-      <div className="mt-6 grid grid-cols-2 gap-x-4 gap-y-3">
-        <HexButton label="-1" tone="minus" onPress={() => change(-1)} />
-        <HexButton label="+1" tone="plus" onPress={() => change(1)} />
-        <HexButton label="-2" tone="minus" onPress={() => change(-2)} />
-        <HexButton label="+2" tone="plus" onPress={() => change(2)} />
-        <HexButton label="-3" tone="minus" onPress={() => change(-3)} />
-        <HexButton label="+3" tone="plus" onPress={() => change(3)} />
-        <HexButton label="-5" tone="minus" onPress={() => change(-5)} />
-        <HexButton label="+5" tone="plus" onPress={() => change(5)} />
+      <div className="mt-4 grid grid-cols-2 gap-x-4 gap-y-2">
+        <HexButton label="-1" tone="minus" onPress={() => bump(-1)} />
+        <HexButton label="+1" tone="plus" onPress={() => bump(1)} />
+        <HexButton label="-3" tone="minus" onPress={() => bump(-3)} />
+        <HexButton label="+3" tone="plus" onPress={() => bump(3)} />
+        <HexButton label="-5" tone="minus" onPress={() => bump(-5)} />
+        <HexButton label="+5" tone="plus" onPress={() => bump(5)} />
       </div>
 
-      <button
-        onClick={collect}
-        className="si-press mt-7 w-full py-3.5 rounded-md"
-        style={{
-          background: `linear-gradient(180deg, #F0E2B6 0%, ${T.parch} 60%, #D2BC85 100%)`,
-          border: `2px solid ${T.gold}`,
-          color: "#2B2117",
-          fontFamily: jaFont,
-          fontSize: 18,
-          boxShadow: "0 4px 10px rgba(0,0,0,.4)",
-        }}
+      <div className="mt-4 flex justify-center gap-5">
+        <button
+          onClick={() => {
+            setLogAll(false);
+            setOpenParts({});
+            sfx.nav();
+            nextTurn();
+          }}
+          className="si-press rounded-full px-4"
+          style={{
+            height: 38,
+            color: "#8FA89A",
+            fontFamily: jaFont,
+            fontSize: 13,
+            border: "1px solid rgba(201,164,104,.35)",
+          }}
+        >
+          ターンを進める
+        </button>
+        <button
+          onClick={() => {
+            sfx.undo();
+            undo();
+          }}
+          className="si-press flex items-center justify-center rounded-full"
+          style={{
+            width: 38,
+            height: 38,
+            color: "#8FA89A",
+            border: "1px solid rgba(201,164,104,.35)",
+          }}
+          aria-label="ひとつ戻す"
+        >
+          <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M4 8h11a5 5 0 0 1 0 10H8" />
+            <path d="M8 4L4 8l4 4" />
+          </svg>
+        </button>
+        <button
+          onClick={() => {
+            sfx.tap();
+            setOpen((v) => !v);
+          }}
+          className="si-press flex items-center justify-center rounded-full"
+          style={{
+            width: 38,
+            height: 38,
+            color: open ? T.parch : "#8FA89A",
+            border: `1px solid ${open ? T.gold : "rgba(201,164,104,.35)"}`,
+            background: open ? "rgba(233,216,166,.12)" : "transparent",
+          }}
+          aria-label="リセット"
+        >
+          <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M20 12a8 8 0 1 1-2.4-5.7" />
+            <path d="M20 4v5h-5" />
+          </svg>
+        </button>
+      </div>
+
+      <div
+        className="mt-3 px-3 py-2 rounded-md"
+        style={{ background: "rgba(233,216,166,.05)", border: `1px solid ${T.gold}44` }}
       >
-        収入を得る　+{income}
-      </button>
+          {log.length === 0 ? (
+            <div
+              className="py-3 text-center"
+              style={{ fontFamily: jaFont, fontSize: 12, color: "#7A8F82" }}
+            >
+              まだ操作がありません
+            </div>
+          ) : (
+            <div className="space-y-1">
+              {(logAll ? log : log.slice(0, LOG_HEAD)).map((h, i) => {
+                const many = h.parts && h.parts.length > 1;
+                const open = !!openParts[i];
+                const collapsed =
+                  many && h.parts.length > PARTS_HEAD ? h.parts.slice(0, PARTS_HEAD) : h.parts;
+                const partSpan = (v, j) => (
+                  <span key={j} style={{ color: v > 0 ? "#8FC0D2" : "#D2908A" }}>
+                    {j > 0 ? " " : ""}
+                    {v > 0 ? `+${v}` : `${v}`}
+                  </span>
+                );
+                return (
+                  <div
+                    key={i}
+                    onClick={() => many && setOpenParts((o) => ({ ...o, [i]: !o[i] }))}
+                    className="py-1.5"
+                    style={{
+                      borderTop: i === 0 ? "none" : "1px solid rgba(201,164,104,.15)",
+                      cursor: many ? "pointer" : "default",
+                    }}
+                  >
+                    <div className="flex items-center gap-2 overflow-hidden">
+                      <span
+                        style={{
+                          fontFamily: numFont,
+                          fontWeight: 700,
+                          fontSize: 14,
+                          color: h.delta > 0 ? "#8FC0D2" : "#D2908A",
+                          minWidth: 58,
+                        }}
+                      >
+                        {h.label}
+                      </span>
+                      {many && !open && (
+                        <span
+                          style={{ fontFamily: numFont, fontSize: 11, whiteSpace: "nowrap" }}
+                        >
+                          <span style={{ color: "#6F8C7C" }}>(</span>
+                          {collapsed.map(partSpan)}
+                          {h.parts.length > PARTS_HEAD && (
+                            <span style={{ color: T.gold }}>
+                              {" "}
+                              …他{h.parts.length - PARTS_HEAD}
+                            </span>
+                          )}
+                          <span style={{ color: "#6F8C7C" }}>)</span>
+                        </span>
+                      )}
+                      <span
+                        className="flex-1 overflow-hidden whitespace-nowrap"
+                        style={{
+                          fontFamily: jaFont,
+                          fontSize: 11,
+                          color: "#7A8F82",
+                          textOverflow: "ellipsis",
+                          minWidth: 0,
+                          textAlign: "right",
+                        }}
+                      >
+                        {agoText(h.at, now)}
+                      </span>
+                      <span
+                        style={{
+                          fontFamily: numFont,
+                          fontSize: 12,
+                          color: "#9FBFA8",
+                          fontVariantNumeric: "tabular-nums",
+                        }}
+                      >
+                        → {h.after}
+                      </span>
+                    </div>
 
-      <div className="mt-4 flex justify-center gap-6">
-        <button
-          onClick={undo}
-          className="si-press px-2 py-1"
-          style={{ color: "#8FA89A", fontFamily: jaFont, fontSize: 14 }}
-        >
-          ひとつ戻す
-        </button>
-        <button
-          onClick={() => setOpen((v) => !v)}
-          className="si-press px-2 py-1"
-          style={{ color: "#8FA89A", fontFamily: jaFont, fontSize: 14 }}
-        >
-          収入を変える
-        </button>
+                    {many && open && (
+                      <div
+                        className="mt-1"
+                        style={{
+                          fontFamily: numFont,
+                          fontSize: 11,
+                          lineHeight: 1.9,
+                          wordBreak: "keep-all",
+                        }}
+                      >
+                        <span style={{ color: "#6F8C7C" }}>(</span>
+                        {h.parts.map(partSpan)}
+                        <span style={{ color: "#6F8C7C" }}>)</span>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          )}
+          {log.length > LOG_HEAD && (
+            <button
+              onClick={() => setLogAll((v) => !v)}
+              className="si-press w-full py-1.5 mt-1 rounded"
+              style={{
+                fontFamily: jaFont,
+                fontSize: 11,
+                color: "#8FA89A",
+                border: "1px solid rgba(201,164,104,.3)",
+              }}
+            >
+              {logAll ? "閉じる" : `もっと見る（残り${log.length - LOG_HEAD}件）`}
+            </button>
+          )}
       </div>
 
       {open && (
@@ -3069,48 +3377,12 @@ function EnergyScreen({ onBack, store }) {
           className="mt-5 p-4 rounded-md"
           style={{ background: "rgba(233,216,166,.08)", border: `1px solid ${T.gold}66` }}
         >
-          <div
-            className="text-center mb-3"
-            style={{ color: T.parch, fontFamily: jaFont, fontSize: 15 }}
-          >
-            1ターンの収入
-          </div>
-          <div className="flex items-center justify-center gap-5">
-            <button
-              onClick={() => setIncome((v) => Math.max(0, v - 1))}
-              className="si-press h-10 w-10 rounded-full"
-              style={{ background: RED, color: "#fff", fontSize: 20 }}
-              aria-label="収入を1減らす"
-            >
-              −
-            </button>
-            <div
-              style={{
-                fontFamily: numFont,
-                fontWeight: 900,
-                fontSize: 34,
-                color: "#fff",
-                minWidth: 48,
-                textAlign: "center",
-              }}
-            >
-              {income}
-            </div>
-            <button
-              onClick={() => setIncome((v) => Math.min(30, v + 1))}
-              className="si-press h-10 w-10 rounded-full"
-              style={{ background: BLUE, color: "#fff", fontSize: 20 }}
-              aria-label="収入を1増やす"
-            >
-              +
-            </button>
-          </div>
           <button
             onClick={() => {
               reset();
               setOpen(false);
             }}
-            className="si-press mt-5 w-full py-2 rounded"
+            className="si-press w-full py-2 rounded"
             style={{
               border: `1px solid ${T.gold}88`,
               color: T.parch,
@@ -3145,7 +3417,7 @@ function SpiritScreen({ onBack, onPick, current, tab: setTab, setTab: setSetTab 
   const shown = SPIRITS.filter((s) => s.set === setTab);
   return (
     <div>
-      <Banner title="精霊を選ぶ" onBack={onBack} />
+      <Banner title="精霊を選ぶ" onBack={onBack} icon={MENU_ICONS.spirit} />
 
       <div className="mt-6 flex rounded overflow-hidden" style={{ border: `1px solid ${T.gold}77` }}>
         {SPIRIT_SETS.map((g, i) => (
@@ -3825,7 +4097,7 @@ function PlaybookScreen({ onBack, spirit, onTier, onEnergy, energy }) {
 
   return (
     <div>
-      <Banner title="基本プレイ方針" onBack={onBack} />
+      <Banner title="基本プレイ方針" onBack={onBack} icon={MENU_ICONS.play} />
       <div className="mt-4 text-center" style={{ fontFamily: jaFont, fontSize: 13, color: "#9FBFA8" }}>
         {spirit.ja}
         {spirit.complexity && (
@@ -3968,7 +4240,7 @@ function TierScreen({ onBack, spirit, onPlay, onEnergy, energy }) {
 
   return (
     <div>
-      <Banner title="能力カードTier表" onBack={onBack} />
+      <Banner title="能力カードTier表" onBack={onBack} icon={MENU_ICONS.tier} />
       <div className="mt-4 text-center" style={{ fontFamily: jaFont, fontSize: 13, color: "#9FBFA8" }}>
         {spirit.ja}
         {spirit.complexity && (
@@ -4730,7 +5002,7 @@ function AchievementScreen({ onBack, tab, setTab }) {
 
   return (
     <div>
-      <Banner title="達成チェッカー" onBack={onBack} />
+      <Banner title="達成チェッカー" onBack={onBack} icon={MENU_ICONS.adv} />
 
       <div className="mt-6 flex rounded overflow-hidden" style={{ border: `1px solid ${T.gold}77` }}>
         {[
@@ -5334,7 +5606,7 @@ const RULES = [
       {
         ul: [
           "カードの回収 … 自分の捨て札のカードをすべて手札に戻す",
-          "能力カードの獲得 … 小能力か大能力の山札から4枚引き、1枚を手札に加える。大能力を獲得した場合は、手札・捨て札・プレイエリアのいずれかから1枚選んでゲームから除外する",
+          "能力カードの獲得 … 小能力か大能力の山札から4枚めくり、1枚を手札に加える。選ばなかった3枚はその能力デッキの捨て札に置く（除外でも山札の下でもない）。大能力を獲得した場合は、手札・捨て札・プレイエリアのいずれかから1枚選んで忘れる",
           "精霊力の獲得 … 記載されている値だけ精霊力を得る",
           "存在を追加 … 矢印の上に距離だけの場合は、既存のマーカーを起点にその距離までに1つ配置する。アイコンがある場合は、記載の条件を満たす土地に配置する",
         ],
@@ -5788,9 +6060,19 @@ const RULES = [
       {
         p: "生い茂った緑の広がりのように略奪をスキップした場合、ダハンは反撃しない。略奪が完全に行われなかった場合は反撃が発生しない。",
       },
+      { h: "効果は書かれた順に上から処理する" },
+      {
+        p: "1枚のカードに複数の効果が書かれている場合、必ず上の行から順に解決する。順番を入れ替えたり、後ろの効果を先に使ったりはできない。",
+      },
+      {
+        p: "順番が結果を変えることは多い。たとえば「侵略者を集める」→「ダメージを与える」と書かれていれば、集めてからまとめて殴れる。逆順にはできないので、狙った動きになるかはカードの記載順で決まる。",
+      },
+      {
+        p: "エレメント条件で解放された効果も同じで、基本効果から順に下へ解決する。",
+      },
       { h: "適用できない効果はスキップ" },
       {
-        p: "到達距離と対象の土地の条件さえ満たせばカード自体は使える。その上で、書かれた効果を上から順に、発動できるものだけ処理する。対象がいない効果は飛ばされる。",
+        p: "到達距離と対象の土地の条件さえ満たせばカード自体は使える。その上で、上から順に処理して、発動できるものだけを解決する。対象がいない効果は飛ばされ、そこで止まるわけではない。",
       },
       { h: "不安カードから不安カードを得た場合" },
       { p: "そのターンのうちに処理する。次のターンに持ち越すのではない。" },
@@ -5908,6 +6190,7 @@ const RULES = [
       {
         ul: [
           "繰り返しはテキストの効果をもう一度使うこと。カード左側のエレメントを再度得るわけではない",
+          "繰り返しはカードプレイ枚数に含まれない。「もう1枚プレイできる」系の効果（大能力『力の嵐』や小能力『拍車をかける炎の言葉』など）も同じで、成長で解放した枚数の外側で追加のプレイができる",
           "繰り返す際は対象を選び直せる。到達距離や対象の土地の条件を満たしていれば、1回目とは別の土地を選んでよい（同じ土地でもよい）",
           "繰り返しにカードのコスト（左上の精霊力）を再度支払う必要はない。もともと1回ぶんの支払いで撃てる",
           "例外として、繰り返しをさせる側のカードに「そのコストはもう一度支払う」と書かれている場合は支払う（大能力「力の嵐」がこれにあたる）",
@@ -5921,6 +6204,7 @@ const RULES = [
         ul: [
           "「能力カードを獲得」と書かれていれば、小能力か大能力かを自分で選べる",
           "獲得したカードはそのターンからプレイできる",
+          "選ばなかった3枚は能力デッキの捨て札に置く。山札が尽きたら捨て札をシャッフルして新しい山札にするので、後でまた出てくる",
           "大能力を獲得したら手札・捨て札・場のいずれかから1枚を忘れる。獲得したばかりの大能力そのものを忘れてもよい",
           "場に出したがまだ解決していないカードを忘れた場合、エレメントは失われ効果も解決できない。支払った精霊力も戻らない",
           "回収はいつ選んでもよい。手札が残っていても、捨て札が空でも構わない",
@@ -6059,12 +6343,14 @@ const RULES = [
   },
 ];
 
+
 function RulesScreen({ onBack, chapter, setChapter }) {
   const T = useT();
   useScrollTop(chapter);
   const idx = RULES.findIndex((r) => r.id === chapter);
   const ch = idx >= 0 ? RULES[idx] : null;
   const next = ch && idx < RULES.length - 1 ? RULES[idx + 1] : null;
+  const prev = ch && idx > 0 ? RULES[idx - 1] : null;
 
   if (ch) {
     return (
@@ -6072,7 +6358,9 @@ function RulesScreen({ onBack, chapter, setChapter }) {
         <Banner
           title={ch.title}
           onBack={() => setChapter(null)}
+          onPrev={prev ? () => setChapter(prev.id) : null}
           onNext={next ? () => setChapter(next.id) : null}
+          icon={MENU_ICONS.rules}
         />
         <div className="mt-7 space-y-4">
           {ch.blocks.map((b, i) => {
@@ -6162,7 +6450,7 @@ function RulesScreen({ onBack, chapter, setChapter }) {
 
   return (
     <div>
-      <Banner title="ルールブック" onBack={onBack} />
+      <Banner title="ルールブック" onBack={onBack} icon={MENU_ICONS.rules} />
       <div
         className="mt-6"
         style={{ fontFamily: jaFont, fontSize: 12.5, color: "#DCE6E4", lineHeight: 2.05 }}
@@ -6185,6 +6473,7 @@ function SpiritIslandTools() {
   const [rulesChapter, setRulesChapter] = useState(null);
   const [advTab, setAdvTab] = useState("adv");
   const [spiritSetTab, setSpiritSetTab] = useState("基本");
+  const [sound, setSound] = useState(soundOn);
   const [spiritId, setSpiritId] = useState(null);
   const spirit = SPIRITS.find((s) => s.id === spiritId) || null;
   const T = themeFor(spiritId);
@@ -6293,7 +6582,40 @@ function SpiritIslandTools() {
       >
         {screen === "menu" && (
           <div>
-            <IslandHeader spirit={spirit} />
+            <div className="relative">
+              <IslandHeader spirit={spirit} />
+              <button
+                onClick={() => {
+                  const v = !sound;
+                  setSound(v);
+                  setSoundOn(v);
+                  if (v) sfx.tap();
+                }}
+                className="si-press absolute flex items-center justify-center rounded-full"
+                style={{
+                  right: 4,
+                  top: 4,
+                  width: 34,
+                  height: 34,
+                  color: sound ? T.parch : "#5A6B69",
+                  background: "rgba(10,20,14,.5)",
+                  border: `1px solid ${sound ? T.gold + "88" : "rgba(120,140,130,.35)"}`,
+                }}
+                aria-label={sound ? "効果音をオフにする" : "効果音をオンにする"}
+              >
+                {sound ? (
+                  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M5 9v6h3.5L13 19V5L8.5 9z" />
+                    <path d="M16.5 9.5a3.5 3.5 0 010 5" />
+                  </svg>
+                ) : (
+                  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M5 9v6h3.5L13 19V5L8.5 9z" />
+                    <path d="M17 10l4 4M21 10l-4 4" />
+                  </svg>
+                )}
+              </button>
+            </div>
 
             <div className="mt-6 space-y-4">
               <SlateButton
