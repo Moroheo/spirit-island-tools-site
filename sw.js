@@ -1,10 +1,8 @@
 /* オフラインでも開けるようにする簡易サービスワーカー */
-const CACHE = "si-tools-v3";
+const CACHE = "si-tools-v4";
+// アプリ本体（html/jsx/css）は事前キャッシュしない。
+// 先読みすると古い版が残り続けるため、毎回ネットワークから取得する。
 const ASSETS = [
-  "./",
-  "./index.html",
-  "./styles.css",
-  "./app.jsx",
   "./manifest.webmanifest",
   "./icon-180.png",
   "./icon-192.png",
@@ -16,7 +14,10 @@ const ASSETS = [
 
 self.addEventListener("install", (e) => {
   e.waitUntil(
-    caches.open(CACHE).then((c) => c.addAll(ASSETS)).then(() => self.skipWaiting())
+    caches
+      .open(CACHE)
+      .then((c) => Promise.all(ASSETS.map((u) => c.add(u).catch(() => {}))))
+      .then(() => self.skipWaiting())
   );
 });
 
