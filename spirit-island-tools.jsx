@@ -5796,6 +5796,8 @@ function AchievementScreen({ onBack, tab, setTab }) {
           {SCENARIOS.map((sc) => {
             const open = openSc === sc.id;
             const checked = !!done[sc.id];
+            const diffText = String(sc.difficulty);
+            const diffSize = diffText.length <= 2 ? 14 : diffText.length === 3 ? 11 : 9.5;
             return (
               <div key={sc.id}>
                 <button
@@ -5815,18 +5817,21 @@ function AchievementScreen({ onBack, tab, setTab }) {
                     <span
                       className="shrink-0 inline-flex items-center justify-center"
                       style={{
-                        width: 30,
+                        minWidth: 30,
                         height: 30,
+                        padding: "0 5px",
                         borderRadius: 6,
                         background: "rgba(0,0,0,.3)",
                         border: `1px solid ${T.gold}`,
                         color: T.parch,
                         fontFamily: numFont,
                         fontWeight: 900,
-                        fontSize: 14,
+                        fontSize: diffSize,
+                        lineHeight: 1,
+                        whiteSpace: "nowrap",
                       }}
                     >
-                      {sc.difficulty}
+                      {diffText}
                     </span>
                     <div className="flex-1 text-left">
                       <div
