@@ -5432,8 +5432,8 @@ const SCENARIOS = [
 function AchievementScreen({ onBack, tab, setTab }) {
   const T = useT();
   const [done, setDone] = useState({});
-  const [openId, setOpenId] = useState(ADVERSARIES[0].id);
-  const [openSc, setOpenSc] = useState(SCENARIOS[0].id);
+  const [openId, setOpenId] = useState(null);
+  const [openSc, setOpenSc] = useState(null);
   const [showHelp, setShowHelp] = useState(false);
   const [memoOpen, setMemoOpen] = useState({});
   const loaded = useRef(false);
