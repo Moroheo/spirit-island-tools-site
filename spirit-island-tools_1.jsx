@@ -1,9 +1,4 @@
-const storage = {
-  get(key){try{const v=localStorage.getItem(key);return v==null?null:{value:v};}catch(e){return null;}},
-  set(key,value){try{localStorage.setItem(key,value);}catch(e){}},
-};
-
-const { useState, useEffect, useRef, createContext, useContext } = React;
+import { useState, useEffect, useRef, createContext, useContext } from "react";
 
 /* ============ 見た目のトークン ============ */
 const GOLD = "#C9A468";
@@ -3011,7 +3006,7 @@ function useEnergyStore() {
   useEffect(() => {
     (async () => {
       try {
-        const res = storage.get("si-energy-state");
+        const res = await window.storage.get("si-energy-state");
         if (res && res.value) {
           const s = JSON.parse(res.value);
           if (typeof s.energy === "number") setEnergy(s.energy);
@@ -3030,7 +3025,7 @@ function useEnergyStore() {
     if (!loaded.current) return;
     (async () => {
       try {
-        storage.set(
+        await window.storage.set(
           "si-energy-state",
           JSON.stringify({ energy, income, turn, log: log.slice(0, 60) })
         );
@@ -5315,7 +5310,7 @@ function AchievementScreen({ onBack, tab, setTab }) {
   useEffect(() => {
     (async () => {
       try {
-        const res = storage.get("si-adversary-progress");
+        const res = await window.storage.get("si-adversary-progress");
         if (res && res.value) setDone(JSON.parse(res.value));
       } catch (e) {
         /* 記録なし。空で開始 */
@@ -5328,7 +5323,7 @@ function AchievementScreen({ onBack, tab, setTab }) {
     if (!loaded.current) return;
     (async () => {
       try {
-        storage.set("si-adversary-progress", JSON.stringify(done));
+        await window.storage.set("si-adversary-progress", JSON.stringify(done));
       } catch (e) {
         /* 保存できなくても操作は続く */
       }
@@ -6864,7 +6859,7 @@ function RulesScreen({ onBack, chapter, setChapter }) {
 }
 
 /* ============ ルート ============ */
-function SpiritIslandTools() {
+export default function SpiritIslandTools() {
   const [screen, setScreen] = useState("menu");
   const [energyFrom, setEnergyFrom] = useState("menu");
   const [rulesChapter, setRulesChapter] = useState(null);
@@ -7103,7 +7098,3 @@ function SpiritIslandTools() {
     </ThemeCtx.Provider>
   );
 }
-
-
-const root = ReactDOM.createRoot(document.getElementById("root"));
-root.render(React.createElement(SpiritIslandTools));
