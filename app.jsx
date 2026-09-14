@@ -2680,7 +2680,7 @@ function Banner({ title, onBack, onNext, onPrev, icon }) {
         <span
           className="absolute flex items-center justify-center"
           style={{
-            left: 2,
+            right: 2,
             bottom: -6,
             width: 34,
             height: 34,
@@ -3181,7 +3181,7 @@ function EnergyScreen({ onBack, store }) {
         </span>
       </div>
 
-      <div className="mt-4 grid grid-cols-2 gap-x-4 gap-y-2">
+      <div className="mt-5 grid grid-cols-2 gap-x-4 gap-y-3">
         <HexButton label="-1" tone="minus" onPress={() => bump(-1)} />
         <HexButton label="+1" tone="plus" onPress={() => bump(1)} />
         <HexButton label="-3" tone="minus" onPress={() => bump(-3)} />
@@ -3278,7 +3278,7 @@ function EnergyScreen({ onBack, store }) {
                   <div
                     key={i}
                     onClick={() => many && setOpenParts((o) => ({ ...o, [i]: !o[i] }))}
-                    className="py-1.5"
+                    className="py-2"
                     style={{
                       borderTop: i === 0 ? "none" : "1px solid rgba(201,164,104,.15)",
                       cursor: many ? "pointer" : "default",
@@ -4580,6 +4580,13 @@ const FLAG_ENG =
 const FLAG_SWE =
   "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAHgAAABLCAIAAAA06NSGAAAFMUlEQVR42u2cPY8cRRCG37e6fdg+I8sgGacgDDkZAUIQEJAQ8QP4C4RIZIQERIiQv0EASAgyckBCIjUC2T6wwXe7XS/BzOzO7O3uzN3trDxH1QW7tx/98XR1dXV19TK//7m7Q8KoQiTT/NGTT9/79sM3viv/zMwIrK9Ukvs8X3/2k6/f+virN/PhVfeCkRs4YtcpANnd3Z3kuLVJkFQNpyS5RMA3DgsAwF1wV/1FTpW0JClT4D56QcAAIwk4fW5oaXRXuZ10qH6EJgu4rdS0fVYHsgW1hXaDCcElkn2CHgrOhCRARhCgAvSIyq+OsQ7QIQE6QAfokAAdoEMCdIAO0CEBOkCHBOgAHaBDAnSADpk+6Cr6zwA9Hl+xeowTllFBE6U+LAzQ56tLlAQN5MdLZDmYm86M2x+T8wzJUKwzpzhv2sbpEpeDRAacFMbOVEKGyWxuFAYkHrDGnQwCndSE0zzMSeYyuwIJZpD69cbVT2jtmEkFwMmNEz0Dc/aVYSQMx4AX+vwApTTFqlkuB3C3DfVIS4dmtxq2KHnFZhL57vO/Sqqq653d/elZG+2vDIfF7j+X/0C5Asy2ex0FSjPeyUcv3fr54PCm+yJLzzE4S2xT6o3qKSNuL4hnnkVarilqIyHAez+8TFIo7DivENbN1r7xJ6B1oyUYkeapHKajm/6QG9Mb62IKCeohbv87u3HgvqhX8GYwOUi/1hfPhdpoxV1fcd3PCJrsDq4MAKvm6scEqU7s3Mk0WqsITTckQuwF7aSTRpn8HJq1vj2nnwx0fLS1kHZpa0sWAWQnBJhbPX5St5LdSO1zECQSfHs/RVVz2h2OlJpc3wk5Gt3uEEi5WtBJQFrR+126kajsYUWQ25cy1WogEgTpqqffRN07g4TMymyMrC+NjlaujXoXMS7XVe160Pe+VxEAz9hbYqyG2iPicuVGC4TbpDddE5IclPccVAq9HtVOIzfPrFkPFVh2K06A+wqT6gI+40RHXp3QDLLqjSKaK1Pj1NpyHwnZYG9SxCIERbJp69NvK7zVZaOYXUL1V/VkrIoNIAQRVOlR02Vkw1THN3a/WR3dKi+XPROQE70Tc2NX+9f+O2Tvf5pJfTlTUuo1albFy62QsHYgzE5Nzk0RDG49dLzIW2eu1yHkeyd3F6+7cSSrkdwgm6VyaA9u8c9eu1sII/4qt4/KCwlPSEKCUaPNuWqXtKtrulq4dBKV5Mpvf/GuS9UUXeyOVwJS51uR2oF6Klm248cPP3rnlw9eP/JHx2Zb96xz8fDGl9+/+Nk3r127ftW9nNt0bGn/9rcuQkCtQGtl+PJPR6/Ujp0GDBMHDyhPtTwBfz++f/L7kOBA1ZY/ju/89uBVlGuYz3fTjC2hyRXDeJHur0RtnJByTnNJ1TJI2Mah5DqTjaHRXsHNODtwJO+dnyLcYGQyt4OSTSXXC3V9HZ+DbXS75S3LwE3rzQX7y45hgEwQbC4pS+buzfFa98hL693CHg954w36JCQx9erF8mhHdLlj5iiollBtaNjperWu5Rrc8vP1d+VbVVBY1toZ7sHfkSAY+n+Epf5lCyE5IDZnxhNMEGNpps/+QHOxWxnyUevEVKeb17HU8P1vtDgINqanvgOjd/sMePwfJfKjA3SADgnQATpAB4IAHaBDAnSADtAhATpAhwToAB2gQwJ0gA65TKA1mdzR0OinQl9U5UezzvEcqZpOKnB1c7Z6bV26Yt0YwGFGQQaxfSF5Utc6O903jpoWfdoYaNBPVrguyZE5yQrvfwnzfEnXp9uUAAAAAElFTkSuQmCC";
 
+const FLAG_FR =
+  "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAHgAAABICAIAAACyfKYoAAAA70lEQVR42u3Xuw2DMBQF0NhbeBaPwnweJauEMlImoKCJwE4gHyykc0vrOsXzU9AJj/vtIv9PNAKDNmgxaIM26HbG6/D2vs7Gjo3uvdHzU7x+NJ3tHRt9UEJVhouHSrnofNlpbvR8ufoTOh90YvUpnu+nXNb/RDp7O7H1Dk5+e+Jj2PVjKAiO4DoIjuAILgiO4DoIjuAILgiO4ILgCG6j0RnBEVwHwREcwZ0gOIILgiM4gguCI7ggOIIjODojOIILgiM4gqMzgiO4DoIjOIKjM4IjuBMER3AEFwRHcEFwBEdwvEZwBNdBcARHcEHwU2UCtCJ/Yf2cbpMAAAAASUVORK5CYII=";
+const FLAG_HB =
+  "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAHgAAABICAIAAACyfKYoAAAAgklEQVR42u3SQREAIAwEMYqDs4VyfGCkKvoiKyGz9e5Zmm8jAA1aoEGDFmjQAg0atECDFmjQoAUatECDBi3QoAUaNGiBBi3QoEELNGiBBg1aw1USCo4GLdCgQQs0aIEGDVqgQQs0aNACDVqgQYMWaNACDRq0QIMWaNCgBRq0QIP+tAZU4gK3fWL/5gAAAABJRU5ErkJggg==";
+const FLAG_RU =
+  "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAHgAAABICAIAAACyfKYoAAAAjUlEQVR42u3SAQ0AIQwEQSBvqg4whJv3Uz9VgI6GWQWXyc2qGt2KfdptXkOgQQs0aNACDVqgQYMWaNACDRq0QIMWaNCgBRq0QIMGLdCgBRo0aIEGLdCgn+37I9qNzkyPFmjQoAUatECDBi3QoAUaNGiBBi3QoEELNGiBBg1aoEELNGjQAg1aoEGDFug+XYrBB8EKjZvdAAAAAElFTkSuQmCC";
+
 /* ============ 達成チェッカー ============ */
 const ADVERSARIES = [
   {
@@ -4740,6 +4747,8 @@ const ADVERSARIES = [
         rule: "王家の援助",
         text:
           "ゲームの準備が完了したあと（侵略者の最初の遠征も含む）、その時点の侵略者デッキの中で最も低いステージかつ一番上のカード1枚を捨て札にする。各島ボードごとに、捨て札にしたカードに対応する土地の中で侵略者が最も少ない土地1つに町1つを追加する。",
+        errata:
+          "日本語版カードでは「侵略者の最初の遠征も含む」という条件が抜けている。上記が正しい処理。",
       },
       {
         lv: 5,
@@ -4754,6 +4763,200 @@ const ADVERSARIES = [
         rule: "試掘の前哨地",
         text:
           "レベル5までの効果に加えて、ゲームの準備時、各島ボードの番号が8の土地に町1つと、箱から荒廃1つを追加する。",
+      },
+    ],
+  },
+  {
+    id: "fr",
+    name: "フランス王国（プランテーション植民地）",
+    flag: FLAG_FR,
+    loss: {
+      name: "広大なプランテーション",
+      text: "ゲームの準備中、プレイ人数×7つの町をサプライに置き、残りを箱に戻す。あなたが町を置くことができない場合、侵略者は勝利する。",
+    },
+    expandName: "新たな換金作物の需要",
+    expandText:
+      "「遠征」のあと、各ボード上で示されている地形の土地を1つ選ぶ。そこに町／都市がある場合、荒廃を1つ追加する。ない場合、町を1つ追加する。",
+    memo: [
+      "町を大量に建てて広げてくる敵対国。町の総数そのものが敗北条件に直結する。",
+      "町を効率よく破壊できる精霊が有利。",
+      "ダハンを増やす・守る手段があると、レベル2以降のダハン損失に耐えやすい。",
+    ],
+    levels: [
+      { lv: 0, fear: "変更なし", rule: "なし", text: "" },
+      {
+        lv: 1,
+        fear: "9（3/3/3）",
+        rule: "辺境遠征隊",
+        text:
+          "ゲームの準備中を除き、侵略者が町／都市がない土地への「遠征」に成功したあと、その土地にダハンを1つ追加する。",
+      },
+      {
+        lv: 2,
+        fear: "10（3/4/3）",
+        rule: "奴隷労働者",
+        text:
+          "レベル1の効果に加えて、ゲームの準備中、「奴隷の反乱」イベントをイベントデッキの上から4枚目の位置に置く。ダハンが2つ以上ある土地で侵略者が「建設」したあと、その土地で1つを除くすべてのダハンを同じ数の町に置き換える。",
+      },
+      {
+        lv: 3,
+        fear: "11（4/4/3）",
+        rule: "初期のプランテーション",
+        text:
+          "レベル2までの効果に加えて、ゲームの準備中、各ボード上で町がない最も大きい番号の土地に町を1つ追加する。また、1番の土地に町を1つ追加する。",
+      },
+      {
+        lv: 4,
+        fear: "12（4/4/4）",
+        rule: "三角貿易",
+        text:
+          "レベル3までの効果に加えて、侵略者が沿岸に都市を「建設」するたびに、その土地に隣接していて町が最も少ない土地1つに町を1つ追加する。",
+      },
+      {
+        lv: 5,
+        fear: "13（4/5/4）",
+        rule: "回復が遅い生態系",
+        text:
+          "レベル4までの効果に加えて、ボードから荒廃を取り除いたとき、その駒を荒廃カード上ではなくこのパネル上に置く。プレイ人数×3つの荒廃がここに置かれたらすぐに、そのすべてを荒廃カード上に移動させる。",
+      },
+      {
+        lv: 6,
+        fear: "14（4/5/5）",
+        rule: "不屈の遠征隊",
+        text:
+          "「遠征」カードを解決したあと（セットアップ中の遠征も含む）、各ボード上で遠征隊がいない土地1つに遠征隊を1つ追加する。",
+        errata:
+          "日本語版カードの記述は誤り。カードには「何もない土地にダハンを追加」とあるが、正しくは上記のとおり遠征隊を追加する。",
+      },
+    ],
+  },
+  {
+    id: "ru",
+    name: "ロシア・ツァーリ国",
+    flag: FLAG_RU,
+    baseDiff: 1,
+    loss: {
+      name: "島に群がる狩人",
+      text:
+        "敵対国ルールによって破壊された獣をこのパネル上に置く。このパネル上にある獣が島上より多い場合、侵略者は勝利する。",
+    },
+    expandName: "捕食者に忍び寄る",
+    expandText:
+      "「遠征」のあと、各ボード上で獣がある土地のあいだでダハンを（合計）2つ追加する。そうできない場合、代わりに別のボード1枚の獣がある土地のあいだでダハンを2つ追加する。",
+    memo: [
+      "獣トークンを破壊してくる敵対国。獣を使う精霊とは相性が悪い。",
+      "遠征隊が+1ダメージを持つので、序盤から略奪が重くなる。",
+      "ダハンが増えるぶん、ダハンを活かす精霊には追い風にもなる。",
+    ],
+    levels: [
+      { lv: 0, fear: "変更なし", rule: "なし", text: "" },
+      {
+        lv: 1,
+        fear: "10（3/3/4）",
+        rule: "皮革を求める狩人（難易度3）",
+        text:
+          "ゲームの準備中、各ボード上で町／都市がない最も番号の大きな土地に獣1枚とダハン1つを追加する。ゲーム中、遠征隊は+1ダメージを与える。「略奪」が荒廃を追加したとき（連鎖を含む）、その土地内の獣を1枚破壊する。",
+      },
+      {
+        lv: 2,
+        fear: "11（4/3/4）",
+        rule: "迫り来る災厄の察知（難易度4）",
+        text:
+          "レベル1の効果に加えて、各アクションが最初にダハンを破壊しそうになったとき、可能ならばそれらのダハンのうち1つは代わりに押し出される。そうしたときに1不安。",
+      },
+      {
+        lv: 3,
+        fear: "11（4/4/3）",
+        rule: "狩人の競争（難易度6）",
+        text:
+          "レベル2までの効果に加えて、略奪カードはダハンが3つ以上ある土地にも対応する。（その土地がすでに略奪カードに対応している場合、「略奪」は依然として1回だけ発生する。）",
+      },
+      {
+        lv: 4,
+        fear: "12（4/4/4）",
+        rule: "開発の加速（難易度7）",
+        text:
+          "レベル3までの効果に加えて、侵略者デッキを作るとき、ステージ3カードを各ステージ2カードのあとに1枚ずつ入れる。（新たなデッキの順番：111-2-3-2-3-2-3-2-33）",
+      },
+      {
+        lv: 5,
+        fear: "13（4/5/4）",
+        rule: "恐怖を前にして塹壕を掘る（難易度9）",
+        text:
+          "レベル4までの効果に加えて、使わないステージ2カードを不安デッキの上から3枚目の下に1枚入れ、使わないステージ3カードを不安デッキの上から7枚目の下に1枚入れる。これらが公開されたとき、即座に建設スペースに（表向きで）置く。",
+      },
+      {
+        lv: 6,
+        fear: "14（5/5/4）",
+        rule: "迅速な利益を求める圧力（難易度11）",
+        text:
+          "レベル5までの効果に加えて、2ターン目以降の略奪ステップのあと、その「略奪」が荒廃を追加しなかった各ボード上：最も多くのダハン（最低1つ）がある土地にダハン1つと町1つを追加する。",
+      },
+    ],
+  },
+  {
+    id: "hb",
+    name: "ハプスブルク君主国（家畜植民地）",
+    flag: FLAG_HB,
+    baseDiff: 2,
+    loss: {
+      name: "再生不能な損害",
+      text:
+        "土地に8以上のダメージを与えた「略奪」中に荒廃カードから取られた荒廃の数を記録する。この数がプレイ人数を超えた場合、侵略者は勝利する。",
+    },
+    expandName: "最高の領土を求めて",
+    expandText:
+      "「遠征」のあと、荒廃4つ以下の各ボード上で、町／荒廃がない土地1つに町を1つ追加する。荒廃が2個以下の各ボード上で、同じことをもう一度実行する。",
+    memo: [
+      "町が大量に増える敵対国。1回の略奪が重くなりやすい。",
+      "荒廃を大量に受ける略奪が敗北条件に直結するので、大きな略奪を通さない立ち回りが要る。",
+      "レベル4以降は町が頑強になるので、単体破壊より全体破壊の効果が有効。",
+    ],
+    levels: [
+      { lv: 0, fear: "変更なし", rule: "なし", text: "" },
+      {
+        lv: 1,
+        fear: "10（3/4/3）",
+        rule: "遊牧民（難易度3）",
+        text:
+          "通常の「建設」ステップのあと、建設カードに対応している各土地に、建設カードに対応していない土地1つから町を1つ集める（ボード／土地順に）。",
+      },
+      {
+        lv: 2,
+        fear: "11（4/5/2）",
+        rule: "都市部より多くの地方（難易度5）",
+        text:
+          "レベル1の効果に加えて、ゲームの準備中、各ボード上にある2番の土地と、準備シンボルがない最も番号の大きな土地に町を1つずつ追加する。ゲーム中、侵略者が内陸の土地に「建設」しそうになったとき、都市1つの代わりに町を2つ「建設」する。",
+      },
+      {
+        lv: 3,
+        fear: "12（4/5/3）",
+        rule: "迅速な拡大（難易度6）",
+        text:
+          "レベル2までの効果に加えて、侵略者デッキを作るとき、ステージ1カードをもう1枚除去する。（新たなデッキの順番：11-2222-33333）",
+      },
+      {
+        lv: 4,
+        fear: "12（4/5/3）",
+        rule: "緑豊かな土地で繁栄する群れ（難易度8）",
+        text:
+          "レベル3までの効果に加えて、荒廃がない土地にある町は頑強である。これらは+2ヒットポイントを持ち、「町を破壊する」効果は、破壊するはずの各町ごとに2ダメージを（町にのみ）与える（「すべての町を破壊する」は通常通りに機能する）。",
+      },
+      {
+        lv: 5,
+        fear: "13（4/6/3）",
+        rule: "移住の波（難易度9）",
+        text:
+          "レベル4までの効果に加えて、最初の「遠征」の前に、上から5枚目の侵略者カードの下にハプスブルク君主国のリマインダーカードを入れる。公開されたとき、各ボード上で都市がない沿岸の土地1つに都市を1つ追加し、荒廃が最も少ない内陸の土地3つに町を1つずつ追加する。",
+      },
+      {
+        lv: 6,
+        fear: "14（5/6/3）",
+        rule: "遠くまで広がった群れ（難易度10）",
+        text:
+          "レベル5までの効果に加えて、隣接しているどれかの土地に町がある場合、「略奪」は（合計で）+2ダメージを与える。（これにより、侵略者がいない土地で「略奪」が起こることはない）",
+        errata:
+          "日本語版カードは「隣接している任意の土地に町がある場合」だが、正しくは「隣接しているどれかの土地に町がある場合」。",
       },
     ],
   },
@@ -5112,6 +5315,7 @@ function AchievementScreen({ onBack, tab, setTab }) {
                           {a.name}
                         </div>
                         <div style={{ fontFamily: jaFont, fontSize: 11, color: "#BBD3DE", marginTop: 3 }}>
+                          {a.baseDiff != null ? `基本難易度${a.baseDiff}　` : ""}
                           {cleared > 0 ? `最高レベル${top}　クリア${cleared}/7` : "未クリア"}
                         </div>
                       </div>
@@ -5226,6 +5430,21 @@ function AchievementScreen({ onBack, tab, setTab }) {
                                     }}
                                   >
                                     {l.text}
+                                  </span>
+                                )}
+                                {l.errata && (
+                                  <span
+                                    className="block mt-1 px-2 py-1 rounded"
+                                    style={{
+                                      fontFamily: jaFont,
+                                      fontSize: 11,
+                                      color: "#7A3B33",
+                                      lineHeight: 1.8,
+                                      background: "rgba(122,59,51,.08)",
+                                      border: "1px solid rgba(122,59,51,.28)",
+                                    }}
+                                  >
+                                    エラッタ：{l.errata}
                                   </span>
                                 )}
                               </span>
