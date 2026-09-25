@@ -6097,9 +6097,11 @@ function AchievementScreen({ onBack, tab, setTab }) {
                     {paraBlock("追加の敗北条件", sc.lose, "#7A3B33")}
 
                     <div className="mb-2">
-                      <div style={{ fontFamily: jaFont, fontSize: 11.5, color: "#3B4A48", fontWeight: 700, marginBottom: 3 }}>
-                        ルールの変更
-                      </div>
+                      {!(sc.rules[0] && typeof sc.rules[0] === "object" && sc.rules[0].h) && (
+                        <div style={{ fontFamily: jaFont, fontSize: 11.5, color: "#3B4A48", fontWeight: 700, marginBottom: 3 }}>
+                          ルールの変更
+                        </div>
+                      )}
                       {sc.rules.map((t, i) =>
                         t && typeof t === "object" && t.h ? (
                           <div

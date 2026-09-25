@@ -1,5 +1,5 @@
 /* オフラインでも開けるようにする簡易サービスワーカー */
-const CACHE = "si-tools-v8";
+const CACHE = "si-tools-v9";
 // アプリ本体（html/jsx/css）は事前キャッシュしない。
 // 先読みすると古い版が残り続けるため、毎回ネットワークから取得する。
 const ASSETS = [
@@ -40,7 +40,8 @@ self.addEventListener("fetch", (e) => {
   if (isAppFile) {
     // アプリ本体は常にネットワークを優先し、取れたら新しいものをキャッシュする
     e.respondWith(
-      fetch(e.request)
+      // ブラウザのHTTPキャッシュに古い版が残らないよう、毎回サーバーに更新を確認する
+      fetch(e.request.url, { cache: "no-cache", credentials: "same-origin" })
         .then((res) => {
           const copy = res.clone();
           caches.open(CACHE).then((c) => c.put(e.request, copy)).catch(() => {});
