@@ -5508,6 +5508,7 @@ function AchievementScreen({ onBack, tab, setTab }) {
   const [openSc, setOpenSc] = useState(null);
   const [showHelp, setShowHelp] = useState(false);
   const [memoOpen, setMemoOpen] = useState({});
+  const [scAdvOpen, setScAdvOpen] = useState({});
   const loaded = useRef(false);
 
   useEffect(() => {
@@ -5871,6 +5872,10 @@ function AchievementScreen({ onBack, tab, setTab }) {
             const checked = !!done[sc.id];
             const diffText = String(sc.difficulty);
             const diffSize = diffText.length <= 2 ? 14 : diffText.length === 3 ? 11 : 9.5;
+            const advCleared = ADVERSARIES.map((a) => {
+              const lvs = a.levels.filter((l) => done[`${a.id}:${l.lv}:${sc.id}`]).map((l) => l.lv);
+              return { a, top: lvs.length ? Math.max(...lvs) : -1 };
+            }).filter((x) => x.top >= 0);
             return (
               <div key={sc.id}>
                 <button
@@ -5915,6 +5920,7 @@ function AchievementScreen({ onBack, tab, setTab }) {
                       </div>
                       <div style={{ fontFamily: jaFont, fontSize: 11, color: "#BBD3DE", marginTop: 3 }}>
                         難易度 {sc.difficulty}{checked ? "　クリア済み" : ""}
+                        {advCleared.length > 0 ? `　敵対国${advCleared.length}` : ""}
                       </div>
                     </div>
                     <span style={{ color: "#DCE6E4", fontSize: 11 }}>{open ? "▲" : "▼"}</span>
@@ -5948,6 +5954,79 @@ function AchievementScreen({ onBack, tab, setTab }) {
                         このシナリオをクリア済みにする
                       </span>
                     </button>
+
+                    <div className="pb-3 mb-3" style={{ borderBottom: "1px solid rgba(60,80,78,.25)" }}>
+                      <button
+                        onClick={() => setScAdvOpen((m) => ({ ...m, [sc.id]: !m[sc.id] }))}
+                        className="si-press w-full flex items-center gap-2 text-left"
+                      >
+                        <span style={{ fontFamily: jaFont, fontSize: 12, color: "#2C5C5A", fontWeight: 700 }}>
+                          組み合わせてクリアした敵対国
+                        </span>
+                        <span style={{ fontSize: 9, color: "#5A6B69" }}>{scAdvOpen[sc.id] ? "▲" : "▼"}</span>
+                      </button>
+                      {!scAdvOpen[sc.id] && (
+                        <div style={{ fontFamily: jaFont, fontSize: 11, color: "#5A6B69", lineHeight: 1.8, marginTop: 3 }}>
+                          {advCleared.length > 0
+                            ? advCleared.map(({ a, top }) => `${a.name.split("（")[0]} レベル${top}`).join("／")
+                            : "まだ記録なし"}
+                        </div>
+                      )}
+                      {scAdvOpen[sc.id] && (
+                        <div className="mt-1">
+                          <div style={{ fontFamily: jaFont, fontSize: 10.5, color: "#7A8F82", lineHeight: 1.7 }}>
+                            このシナリオと組み合わせてクリアした敵対国のレベルに印をつける。敵対国タブの「＋シナリオ」と同じ記録なので、どちらで付けても両方に反映される。
+                          </div>
+                          {ADVERSARIES.map((a) => {
+                            const lvs = a.levels.filter((l) => done[`${a.id}:${l.lv}:${sc.id}`]).map((l) => l.lv);
+                            const top = lvs.length ? Math.max(...lvs) : -1;
+                            return (
+                              <div key={a.id} className="mt-2">
+                                <div
+                                  style={{
+                                    fontFamily: jaFont,
+                                    fontSize: 11.5,
+                                    fontWeight: 700,
+                                    color: top >= 0 ? "#2C5C5A" : "#3B4A48",
+                                  }}
+                                >
+                                  {top >= 0 ? "✓ " : ""}
+                                  {a.name}
+                                  {top >= 0 && (
+                                    <span style={{ fontWeight: 400, fontSize: 10.5, color: "#5A6B69" }}>
+                                      　最高レベル{top}
+                                    </span>
+                                  )}
+                                </div>
+                                <div className="mt-1 flex flex-wrap gap-1.5">
+                                  {a.levels.map((l) => {
+                                    const ck = `${a.id}:${l.lv}:${sc.id}`;
+                                    const on = !!done[ck];
+                                    return (
+                                      <button
+                                        key={l.lv}
+                                        onClick={() => toggle(ck)}
+                                        className="si-press rounded-full"
+                                        style={{
+                                          fontFamily: jaFont,
+                                          fontSize: 10.5,
+                                          padding: "3px 9px",
+                                          color: on ? "#fff" : "#5A6B69",
+                                          background: on ? "#2C5C5A" : "rgba(255,255,255,.5)",
+                                          border: `1px solid ${on ? "#2C5C5A" : "rgba(60,80,78,.3)"}`,
+                                        }}
+                                      >
+                                        {on ? "✓ " : ""}レベル{l.lv}
+                                      </button>
+                                    );
+                                  })}
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      )}
+                    </div>
 
                     {sc.intro && (
                       <div
