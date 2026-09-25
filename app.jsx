@@ -5831,33 +5831,6 @@ function AchievementScreen({ onBack, tab, setTab }) {
                                 )}
                               </span>
                             </button>
-
-                            <div className="mt-2 ml-9 flex flex-wrap gap-1.5">
-                              <span style={{ fontFamily: jaFont, fontSize: 9.5, color: "#7A8F82", alignSelf: "center" }}>
-                                ＋シナリオ
-                              </span>
-                              {SCENARIOS.map((sc) => {
-                                const ck = `${a.id}:${l.lv}:${sc.id}`;
-                                const on = !!done[ck];
-                                return (
-                                  <button
-                                    key={sc.id}
-                                    onClick={() => toggle(ck)}
-                                    className="si-press rounded-full"
-                                    style={{
-                                      fontFamily: jaFont,
-                                      fontSize: 10.5,
-                                      padding: "3px 9px",
-                                      color: on ? "#fff" : "#5A6B69",
-                                      background: on ? "#2C5C5A" : "rgba(255,255,255,.5)",
-                                      border: `1px solid ${on ? "#2C5C5A" : "rgba(60,80,78,.3)"}`,
-                                    }}
-                                  >
-                                    {on ? "✓ " : ""}{sc.name}
-                                  </button>
-                                );
-                              })}
-                            </div>
                           </div>
                         );
                       })}
@@ -5980,7 +5953,7 @@ function AchievementScreen({ onBack, tab, setTab }) {
                       {scAdvOpen[sc.id] && (
                         <div className="mt-1">
                           <div style={{ fontFamily: jaFont, fontSize: 10.5, color: "#7A8F82", lineHeight: 1.7 }}>
-                            このシナリオと組み合わせてクリアした敵対国のレベルに印をつける。敵対国タブの「＋シナリオ」と同じ記録なので、どちらで付けても両方に反映される。
+                            このシナリオと組み合わせてクリアした敵対国のレベルに印をつける。
                           </div>
                           {ADVERSARIES.map((a) => {
                             const lvs = a.levels.filter((l) => done[`${a.id}:${l.lv}:${sc.id}`]).map((l) => l.lv);
