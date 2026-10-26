@@ -3081,7 +3081,13 @@ function useEnergyStore() {
     log,
     setIncome,
     change: (d) => {
-      snap();
+      // ログの先頭行にまとめられるタップ（push のマージ条件と同じ）は
+      // 新しいスナップショットを作らず、その行全体を undo/redo の1単位にする
+      const head = log[0];
+      const merges =
+        head && head.delta !== 0 && Date.now() - head.at < 1000;
+      if (!merges) snap();
+      else redoStack.current = [];
       const after = Math.max(0, energy + d);
       setEnergy(after);
       setFlash((f) => f + 1);

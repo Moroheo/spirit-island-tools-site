@@ -1,5 +1,5 @@
 /* オフラインでも開けるようにする簡易サービスワーカー */
-const CACHE = "si-tools-v10";
+const CACHE = "si-tools-v11";
 // アプリ本体（html/jsx/css）は事前キャッシュしない。
 // 先読みすると古い版が残り続けるため、毎回ネットワークから取得する。
 const ASSETS = [
