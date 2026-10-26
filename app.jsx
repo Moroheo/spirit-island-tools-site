@@ -3006,6 +3006,7 @@ function useEnergyStore() {
   const [flash, setFlash] = useState(0);
   const [log, setLog] = useState([]); // 操作履歴（新しいものが先頭）
   const undoStack = useRef([]);
+  const redoStack = useRef([]);
   const loaded = useRef(false);
 
   useEffect(() => {
@@ -3042,6 +3043,7 @@ function useEnergyStore() {
 
   const snap = () => {
     undoStack.current = [...undoStack.current.slice(-19), { energy, turn, log }];
+    redoStack.current = [];
   };
   // 増減が1秒以内に続いたら、向きに関わらず合計値としてまとめる
   const push = (label, delta, after) => {
@@ -3093,10 +3095,20 @@ function useEnergyStore() {
     undo: () => {
       const p = undoStack.current.pop();
       if (!p) return;
+      redoStack.current = [...redoStack.current.slice(-19), { energy, turn, log }];
       setEnergy(p.energy);
       setTurn(p.turn);
       if (Array.isArray(p.log)) setLog(p.log);
       undoStack.current = [...undoStack.current];
+    },
+    redo: () => {
+      const p = redoStack.current.pop();
+      if (!p) return;
+      undoStack.current = [...undoStack.current.slice(-19), { energy, turn, log }];
+      setEnergy(p.energy);
+      setTurn(p.turn);
+      if (Array.isArray(p.log)) setLog(p.log);
+      redoStack.current = [...redoStack.current];
     },
     reset: () => {
       snap();
@@ -3106,6 +3118,7 @@ function useEnergyStore() {
     },
     resetAll: () => {
       undoStack.current = [];
+      redoStack.current = [];
       setEnergy(0);
       setIncome(1);
       setTurn(1);
@@ -3139,7 +3152,7 @@ function EnergyScreen({ onBack, store }) {
     d > 0 ? sfx.plus() : sfx.minus();
     change(d);
   };
-  const { energy, turn, flash, log, change, nextTurn, undo, reset } = store;
+  const { energy, turn, flash, log, change, nextTurn, undo, redo, reset } = store;
 
   // 履歴を開いている間は「何分前」の表示を更新し続ける
   useEffect(() => {
@@ -3226,6 +3239,25 @@ function EnergyScreen({ onBack, store }) {
           <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
             <path d="M4 8h11a5 5 0 0 1 0 10H8" />
             <path d="M8 4L4 8l4 4" />
+          </svg>
+        </button>
+        <button
+          onClick={() => {
+            sfx.undo();
+            redo();
+          }}
+          className="si-press flex items-center justify-center rounded-full"
+          style={{
+            width: 38,
+            height: 38,
+            color: "#8FA89A",
+            border: "1px solid rgba(201,164,104,.35)",
+          }}
+          aria-label="ひとつ進める"
+        >
+          <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M20 8H9a5 5 0 0 0 0 10h7" />
+            <path d="M16 4l4 4-4 4" />
           </svg>
         </button>
         <button
